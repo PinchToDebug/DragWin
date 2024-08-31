@@ -6,7 +6,8 @@ It's an application that lets you move windows **without holding down Alt or Con
 - Resizing windows from the sides and edges
 - Scrolling through windows behind the one you start scrolling on _(Hold middle-click down)_
 - Doesn't affect fullscreen applications
-
+- Doesn't affect right-clicking
+  
 ## 🤝 Contributing
 Contributions are welcome! If you have an idea for a feature or find a bug, please open an issue or submit a pull request!
 
