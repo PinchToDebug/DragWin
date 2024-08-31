@@ -499,9 +499,10 @@ namespace DragWinWPF
                 ///////// TODO: this is wrong so commented
                 //if (((style & unchecked((int)0x80000000)) != 0 && (style & 0x00800000) == 0 && (style & 0x00C00000) == 0))
                 //{
-                //    Debug.WriteLine("[MB 1st check] Window is borderless fulscreen.");
+                //    Debug.WriteLine("[MB 1st check] Window is borderless fullscreen.");
                 //    return CallNextHookEx(hookIdMouse, nCode, wParam, lParam);
                 //}
+
                 /////////
                 if ((startRect.right - startRect.left) >= (int)SystemParameters.PrimaryScreenWidth &&
                     (startRect.bottom - startRect.top) >= (int)SystemParameters.PrimaryScreenHeight &&
@@ -656,22 +657,18 @@ namespace DragWinWPF
                     hWnd = GetAncestor(innerHwnd(lParam), 2);
                 }
 
-                int style = GetWindowLong(hWnd, -16);
-
-                if ((tempRect.right - tempRect.left) >= (int)SystemParameters.PrimaryScreenWidth &&
+                int style = GetWindowLong(GetAncestor(innerHwnd(lParam), 2), -16);
+                if ((style & WS_OVERLAPPEDWINDOW) == 0)
+                {
+                    Debug.WriteLine(" [2nd check] Its fullscreen, not gonna attempt to move it!");
+                    return CallNextHookEx(hookIdMouse, nCode, wParam, lParam);
+                }
+                else if ((tempRect.right - tempRect.left) >= (int)SystemParameters.PrimaryScreenWidth &&
                     (tempRect.bottom - tempRect.top) >= (int)SystemParameters.PrimaryScreenHeight &&
                     tempRect.top <= 0 && tempRect.right >= (int)SystemParameters.PrimaryScreenWidth)
                 {
-                    string s = parentHwndTitle(lParam);
-                    Debug.WriteLine($"ok: {s}");
-                    if (string.IsNullOrEmpty(parentHwndTitle(lParam)))
+                    if (!string.IsNullOrEmpty(parentHwndTitle(lParam)))
                     {
-
-                        Debug.WriteLine($"ummm: {GetAncestor(innerHwnd(lParam), 2)}");
-                    }
-                    else
-                    {
-                        Debug.WriteLine($"ummm: {GetAncestor(innerHwnd(lParam), 2)}");
                         Debug.WriteLine((tempRect.right - tempRect.left) + "x" + (tempRect.bottom - tempRect.top) + " [RB 3rd check] Its fullscreen, not gonna attempt to move it!");
                         return CallNextHookEx(hookIdMouse, nCode, wParam, lParam);
                     }
@@ -687,7 +684,7 @@ namespace DragWinWPF
 
                 // Debug.WriteLine($"Mouse pos: {initialMouseClickPosition}");
                 //  return CallNextHookEx(hookIdMouse, nCode, wParam, lParam);
-                Debug.WriteLine("whatiffffffff");
+                Debug.WriteLine("rbutton didnt get interrupted");
 
             }
 
