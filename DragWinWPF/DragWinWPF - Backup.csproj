@@ -1,0 +1,32 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+    <ApplicationIcon>default.ico</ApplicationIcon>
+    <FileVersion>0.9.6</FileVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Icon\default.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="default.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="InputSimulator" Version="1.0.4" />
+    <PackageReference Include="WPF-UI.Tray" Version="3.0.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Icon\default.ico" />
+  </ItemGroup>
+
+ 
+
+</Project>
