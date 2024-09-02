@@ -3,8 +3,8 @@ It's an application that lets you move windows **without holding down Alt or Con
 ## ✨ Features
 
 - Moving windows with right-click
-- Resizing windows from the sides and edges
-- Scrolling through windows behind the one you start scrolling on _(Hold middle-click down)_
+- Resizing windows from the sides and corners
+- Scrolling through windows that are behind the one you start scrolling on _(Hold middle-click down and scroll)_
 - Scrolling between virtual desktops from the top corners
 - Doesn't affect fullscreen applications
 - Doesn't affect right-clicking
