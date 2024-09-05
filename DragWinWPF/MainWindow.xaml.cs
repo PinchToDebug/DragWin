@@ -6,7 +6,9 @@ using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Interop;
 using System.Windows.Media;
+using System.Windows.Shapes;
 using WindowsInput;
 using WindowsInput.Native;
 using static Interop;
@@ -36,7 +38,7 @@ namespace DragWinWPF
         private const int WM_MBUTTONUP = 0x0208;
         private const int WM_MOUSEWHEEL = 0x020A;
         private const int WS_OVERLAPPEDWINDOW = 0x00CF0000; // fullscreen style like
-       
+
         // window sides & corners
         // -----------------
         private const int HTLEFT = 10;
@@ -87,6 +89,8 @@ namespace DragWinWPF
         private static bool hwndCheck = false;
         private static bool rightMouseDown = false;
         private static bool middleMouseDown = false;
+        private static bool usedFancyZone = false;
+        private static bool fancyZoneWasChromium = false;
         // private static bool leftdown = false;
         private static bool doOnce = true;
         private static bool doOnce2 = true;
@@ -121,7 +125,7 @@ namespace DragWinWPF
         private static int height;
         private static int gap = 20;
         private static string exePath = "";
-        private static string[] dontMove = { /*"",*/"", "Quick settings", "EarTrumpet", "Notification Overflow", "Task Switching", "Program Manager", "Start", "Notification Center", "Ear Trumpet", "Task Manager","Windows Input Experience" };
+        private static string[] dontMove = { /*"",*/"", "Quick settings", "EarTrumpet", "Notification Overflow", "Task Switching", "Program Manager", "Start", "Notification Center", "Ear Trumpet", "Task Manager", "Windows Input Experience" };
 
 
 
@@ -145,18 +149,18 @@ namespace DragWinWPF
             {
                 MessageBox.Show("Couldn't get the executable's path.");
             }
-           
-           
+
+
             InitializeComponent();
 
 
-            if (KeyExists("canOverflow"))       canOverflow = (bool)ReadKeyValue("canOverflow"); 
+            if (KeyExists("canOverflow")) canOverflow = (bool)ReadKeyValue("canOverflow");
             else canOverflow = true;
-            if (KeyExists("bringToFront"))      bringToFront = (bool)ReadKeyValue("bringToFront");
-            if (KeyExists("enabled"))           enabled = (bool)ReadKeyValue("enabled");
-            if (KeyExists("canResizeCorners"))  canResizeCorners = (bool)ReadKeyValue("canResizeCorners");
-            if (KeyExists("canScrollWindows"))  canScrollWindows = (bool)ReadKeyValue("canScrollWindows");
-            if (KeyExists("startOnLogin"))      startOnLogin = (bool)ReadKeyValue("startOnLogin");
+            if (KeyExists("bringToFront")) bringToFront = (bool)ReadKeyValue("bringToFront");
+            if (KeyExists("enabled")) enabled = (bool)ReadKeyValue("enabled");
+            if (KeyExists("canResizeCorners")) canResizeCorners = (bool)ReadKeyValue("canResizeCorners");
+            if (KeyExists("canScrollWindows")) canScrollWindows = (bool)ReadKeyValue("canScrollWindows");
+            if (KeyExists("startOnLogin")) startOnLogin = (bool)ReadKeyValue("startOnLogin");
 
 
             bringToFront = true; // Other option isn't available
@@ -185,7 +189,7 @@ namespace DragWinWPF
 
 
         private static void MouseEvent(MouseEventFlags flags)
-        {        
+        {
             ignoreRB = true;
             ignoreMB = true;
             mouse_event((uint)flags, 0, 0, 0, 0);
@@ -543,9 +547,10 @@ namespace DragWinWPF
 
 
 
-                if (windowOrder.Count > 0)
+                if (windowOrder.Count() > 0)
                 {
                     middleMouseDown = true;
+
                 }
                 Debug.WriteLine("done gathering window hwnds\n");
                 foreach (var item in windowOrder)
@@ -553,6 +558,8 @@ namespace DragWinWPF
                     Debug.WriteLine($"{item}:\t{parentHwndTitle(item)}");
                 }
                 Debug.WriteLine("\n");
+                //  MessageBox.Show($"md: {middleMouseDown}\n{windowOrder.Count()}");
+
                 return CallNextHookEx(hookIdMouse, nCode, wParam, lParam);
 
             }
@@ -569,17 +576,17 @@ namespace DragWinWPF
                 {
                     return -1;
                 }
-                if ((short)((hookStruct.mouseData >> 16) & 0xffff) < 0 && (currentIndex + 1) <= windowOrder.Count - 1) // Scroll down
+                if ((short)((hookStruct.mouseData >> 16) & 0xffff) < 0 && (currentIndex + 1) <= windowOrder.Count() - 1) // Scroll down
                 {
                     // Debug.WriteLine($"down\t{GetWindowTitle(windowOrder[currentIndex + 1])}");
-
                     SetForegroundWindow(windowOrder[currentIndex + 1]);
                     Debug.WriteLine($"set +1: {windowOrder[currentIndex + 1]}");
 
                 }
                 else if ((short)((hookStruct.mouseData >> 16) & 0xffff) > 0 && currentIndex - 1 != -1) // Scroll up
                 {
-                    //Debug.WriteLine($"up\t\t{GetWindowTitle(windowOrder[currentIndex - 1])}");
+
+                    // Debug.WriteLine($"up\t\t{GetWindowTitle(windowOrder[currentIndex - 1])}");
                     SetForegroundWindow(windowOrder[currentIndex - 1]);
                     Debug.WriteLine($"set -1: {windowOrder[currentIndex - 1]}");
 
@@ -605,11 +612,14 @@ namespace DragWinWPF
                 }
             }
             if (wParam == (IntPtr)WM_LBUTTONDOWN)
-
             {
+                if (usedFancyZone)
+                {
+                    return -1;
+                }
                 if (!bringToFront && !clickFixNoTop)
                 {
-                    Debug.WriteLine("leftwin és nem front");
+
                     if (leftWindow)
                     {
                         Debug.WriteLine("DOING");
@@ -637,6 +647,10 @@ namespace DragWinWPF
 
             if (wParam == (IntPtr)WM_LBUTTONUP)
             {
+                if (usedFancyZone)
+                {
+                    return -1;
+                }
                 // leftdown = false;
             }
 
@@ -669,6 +683,7 @@ namespace DragWinWPF
                 {
                     if (!string.IsNullOrEmpty(parentHwndTitle(lParam)))
                     {
+                        MessageBox.Show("t");
                         Debug.WriteLine((tempRect.right - tempRect.left) + "x" + (tempRect.bottom - tempRect.top) + " [RB 3rd check] Its fullscreen, not gonna attempt to move it!");
                         return CallNextHookEx(hookIdMouse, nCode, wParam, lParam);
                     }
@@ -704,6 +719,7 @@ namespace DragWinWPF
                     Debug.WriteLine("RB UP ignored");
                     return 0;
                 }
+
                 GetWindowRect(hWnd, out rect);
                 movingExplorerFix = true;
                 if (reSizing)
@@ -747,6 +763,8 @@ namespace DragWinWPF
                     });
                     clickFix = false;
                 }
+
+
 
                 // rbutton up 
                 if (GetFileDescription(hWnd) == "Windows Explorer" && fixExplorerInside && movingWindow)
@@ -798,9 +816,28 @@ namespace DragWinWPF
                 {
                     movingWindow = false;
 
+
+                    if (usedFancyZone)
+                    {
+                        GetWindowRect(hWnd, out rect);
+
+                        Debug.WriteLine("FancyZone: off");
+                        usedFancyZone = false;
+                        ReleaseCapture();
+
+                        Task.Run(() =>
+                        {
+                            MouseEvent(MouseEventFlags.LeftDown);
+                            MouseEvent(MouseEventFlags.LeftUp);
+                            Task.Delay(2);
+                            MoveWindow(hWnd, newX, newY, width, height, true);
+                            GetWindowRect(hWnd, out rect);
+                        });
+                    }
+
                     if (isChromium(hWnd, lParam))
                     {
-                        Debug.WriteLine("FIX CHROME INSIDE PLS");
+                        Debug.WriteLine("FIX CHROME INSIDE ");
                         fixChromiumWindow = true;
                         legacyFixOnceOnly = true;
                     }
@@ -809,7 +846,7 @@ namespace DragWinWPF
                         fixChromiumWindow = false;
                     }
                     clickFix = true;
-                    if ((int)GetMousePosition().Y <= 1 | rect.top < 0)
+                    if ((int)GetMousePosition().Y <= 40 | rect.top < 0)
                     {
                         Debug.WriteLine("set full");
                         Task.Run(() =>
@@ -819,7 +856,7 @@ namespace DragWinWPF
                             GetWindowRect(hWnd, out rect);
                         });
                     }
-                    else if ((int)GetMousePosition().X <= 1)
+                    else if ((int)GetMousePosition().X <= 40)
                     {
                         Debug.WriteLine("set full left");
                         Task.Run(() =>
@@ -832,7 +869,7 @@ namespace DragWinWPF
                             GetWindowRect(hWnd, out rect);
                         });
                     }
-                    else if ((int)GetMousePosition().X + 1 >= screenWidth)
+                    else if ((int)GetMousePosition().X + 40 >= screenWidth)
                     {
                         Debug.WriteLine("set full right");
                         Task.Run(() =>
@@ -1002,7 +1039,7 @@ namespace DragWinWPF
                     }
                     else if (GetFileDescription(hWnd) == "Windows Explorer")
                     {
-                        Debug.WriteLine("moving exp papirWM fix");
+                        Debug.WriteLine("moving exp WM fix");
                         Task.Run(() =>
                         {
                             Thread.Sleep(5);
@@ -1023,6 +1060,56 @@ namespace DragWinWPF
 
                 if (!reSizing)
                 {
+                    if ((GetAsyncKeyState(0x10) & 0x8000) != 0) // If shift is down [FancyZone support]
+                    {
+                        Debug.WriteLine("FancyZone: activated?");
+
+                        int WM_SYSCOMMAND = 0x112;
+                        int SC_MOVE = 0xF010;
+                        IntPtr _hwnd = FindWindowEx(0, 0, null, parentHwndTitle(hWnd));
+                        PostMessage(_hwnd, WM_SYSCOMMAND, SC_MOVE, lParam);
+                        if (isChromium(_hwnd, lParam) && !usedFancyZone)
+                        {
+                            Debug.WriteLine("FancyZone: is chrome");
+                            Window newWindow = new Window();
+
+                            Rectangle redRectangle = new Rectangle
+                            {
+                                Width = 20,
+                                Height = 20,
+                                Fill = new SolidColorBrush(Color.FromArgb(1, 255, 255, 255))
+                            };
+
+                            Canvas canvas = new Canvas();
+                            canvas.Children.Add(redRectangle);
+                            newWindow.Content = canvas;
+                            System.Drawing.Point cc = new System.Drawing.Point(hookStruct.pt.x, hookStruct.pt.y);
+
+                            newWindow.Left = cc.X - 10;
+                            newWindow.Top = cc.Y - 10;
+                            newWindow.Width = 20;
+                            newWindow.Height = 20;
+                            newWindow.WindowStyle = WindowStyle.None;
+                            newWindow.ShowActivated = true;
+                            newWindow.Topmost = true;
+                            newWindow.AllowsTransparency = true;
+                            newWindow.Background = Brushes.Transparent;
+
+                            newWindow.Show();
+
+                            IntPtr hwnd = new WindowInteropHelper(newWindow).Handle;
+                            Task.Run(() =>
+                            {
+                               SendMessage(hwnd, WM_LBUTTONDOWN, IntPtr.Zero, IntPtr.Zero);
+                               SendMessage(hwnd, WM_LBUTTONUP, IntPtr.Zero, IntPtr.Zero);
+                            });
+
+                            Task.Delay(20);
+                            newWindow.Close();
+
+                        }
+                        usedFancyZone = true;
+                    }
                     System.Drawing.Point currentMousePosition = new System.Drawing.Point(hookStruct.pt.x, hookStruct.pt.y);
                     deltaX = currentMousePosition.X - previousMousePosition.x;
                     deltaY = currentMousePosition.Y - previousMousePosition.y;
@@ -1077,7 +1164,7 @@ namespace DragWinWPF
                 fileDescription = FileVersionInfo.GetVersionInfo(executableFilePath).FileDescription ?? "";
             }
             return fileDescription;
-           
+
         }
         private static int HitTest(RECT windowRect, POINT pt)
         {
@@ -1151,7 +1238,7 @@ namespace DragWinWPF
             MSLLHOOKSTRUCT hs = new MSLLHOOKSTRUCT();
             try
             {
-               hs = (MSLLHOOKSTRUCT)Marshal.PtrToStructure(lParam, typeof(MSLLHOOKSTRUCT))!;
+                hs = (MSLLHOOKSTRUCT)Marshal.PtrToStructure(lParam, typeof(MSLLHOOKSTRUCT))!;
             }
             catch (Exception)
             {
@@ -1211,7 +1298,7 @@ namespace DragWinWPF
         {
             WriteKey(ScrollWindows_Button, nameof(canScrollWindows), ref canScrollWindows);
         }
- 
+
         private void SetTop_Button_Checked(object sender, RoutedEventArgs e)
         {
             WriteKey(SetTop_Button, nameof(bringToFront), ref bringToFront);
@@ -1252,7 +1339,7 @@ namespace DragWinWPF
             {
                 using (RegistryKey key = Registry.CurrentUser.OpenSubKey("SOFTWARE\\DragWin")!)
                 {
-                    if (key != null )
+                    if (key != null)
                     {
                         object value = key.GetValue(keyName)!;
                         if (value != null)
@@ -1265,7 +1352,7 @@ namespace DragWinWPF
                             {
                                 return boolValue;
                             }
-                           
+
                         }
                     }
                 }
