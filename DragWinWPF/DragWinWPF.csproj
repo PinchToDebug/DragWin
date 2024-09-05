@@ -7,8 +7,9 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
     <ApplicationIcon>default.ico</ApplicationIcon>
-    <FileVersion>0.9.20</FileVersion>
+    <FileVersion>0.9.23</FileVersion>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <UseWindowsForms>True</UseWindowsForms>
   </PropertyGroup>
 
   <ItemGroup>

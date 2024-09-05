@@ -6,6 +6,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using Point = System.Drawing.Point;
 
 
 public static class Interop
@@ -87,17 +88,28 @@ public static class Interop
         public Int32 X;
         public Int32 Y;
     };
-    public static Point GetMousePosition()
+    public static POINT GetMousePosition()
     {
         var w32Mouse = new Win32Point();
         GetCursorPos(ref w32Mouse);
-        return new Point(w32Mouse.X, w32Mouse.Y);
+        return new POINT (w32Mouse.X, w32Mouse.Y);
     }
     public struct POINT
     {
-        public int x;
-        public int y;
+        public int X;
+        public int Y;
+        public POINT(int x, int y)
+        {
+            X = x;
+            Y = y;
+        }
     }
+
+
+    [DllImport("shcore.dll")]
+    public static extern int GetDpiForMonitor(IntPtr hMonitor, int dpiType, out uint dpiX, out uint dpiY);
+    [DllImport("user32.dll")]
+    public static extern IntPtr MonitorFromPoint(POINT pt, uint dwFlags);
     [DllImport("user32.dll")]
     public static extern IntPtr WindowFromPoint(POINT point);
     public static IntPtr SetHook(int idHook, Delegate proc)

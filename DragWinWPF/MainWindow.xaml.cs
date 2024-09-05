@@ -11,16 +11,22 @@ using System.Windows.Media;
 using System.Windows.Shapes;
 using WindowsInput;
 using WindowsInput.Native;
+using System.Windows.Forms;
 using static Interop;
 using Brushes = System.Windows.Media.Brushes;
 using Color = System.Windows.Media.Color;
 using Point = System.Windows.Point;
+using MessageBox = System.Windows.MessageBox;
+using Application = System.Windows.Application;
+using Rectangle = System.Windows.Shapes.Rectangle;
+using MouseEventArgs = System.Windows.Input.MouseEventArgs;
 
 namespace DragWinWPF
 {
     public partial class MainWindow
     {
-
+        [DllImport("user32.dll")]
+        public static extern IntPtr GetWindow(IntPtr hWnd, uint uCmd);
         // mutex
         // -----------------
         private const string mutexId = "{47bb6j6d-l38e-4bb5-92jb-a239cr17bj9e}";
@@ -50,8 +56,9 @@ namespace DragWinWPF
         private const int HTBOTTOMLEFT = 16;
         private const int HTBOTTOMRIGHT = 17;
         private static int hitTestCode = 0;
-        private static int screenWidth = (int)SystemParameters.PrimaryScreenWidth;
-        private static int screenHeight = (int)SystemParameters.PrimaryScreenHeight;
+
+        private const uint MONITOR_DEFAULTTONEAREST = 0x00000002; // Handle to the monitor that is nearest to the point.
+        private const int MDT_EFFECTIVE_DPI = 0; 
 
         private static IntPtr hookIdMouse = IntPtr.Zero;
         private static IntPtr hWnd;
@@ -64,16 +71,15 @@ namespace DragWinWPF
         private static List<IntPtr> windowOrder = new List<IntPtr>();
         private static List<IntPtr> windowHandles = new List<IntPtr>();
 
+        private static Screen screen;
         private static MSLLHOOKSTRUCT hookStruct;
 
         private static RECT rect;
-        private static Point initialMouseClickPosition;
+        private static POINT initialMouseClickPosition;
         private static POINT previousMousePosition;
         private static Interop.LowLevelMouseProc mouseProc = MouseHookCallback;
 
-        [DllImport("user32.dll")]
-        public static extern IntPtr GetWindow(IntPtr hWnd, uint uCmd);
-
+     
 
         //ui buttons
         // -----------------
@@ -381,7 +387,7 @@ namespace DragWinWPF
                 if (fixChromiumWindow && !innerMovedHwndTitle.Contains("Chrome Legacy Window") && !innerHwndTitle(lParam).Contains("Chrome Legacy Window")) // title to title (usually)
                 {
 
-                    clickFix = false; // No need for ClickFix as it releases the right mouse button
+                  //  clickFix = false; // No need for ClickFix as it releases the right mouse button
                     Debug.WriteLine($"fix inner hwnd: {fixChromiumWindow}");
                     Task.Run(() =>
                     {
@@ -402,7 +408,7 @@ namespace DragWinWPF
 
             prevInnerHwnd = innerHwnd(lParam);
 
-            // if (cursorPos.y >= SystemParameters.WorkArea.Height || dontMove.Contains(t))
+            // if (cursorPos.Y >= SystemParameters.WorkArea.Height || dontMove.Contains(t))
 
             //if (hwndCheck) // this is not neccessery gethere
             //{
@@ -508,9 +514,13 @@ namespace DragWinWPF
                 //}
 
                 /////////
-                if ((startRect.right - startRect.left) >= (int)SystemParameters.PrimaryScreenWidth &&
-                    (startRect.bottom - startRect.top) >= (int)SystemParameters.PrimaryScreenHeight &&
-                    startRect.top <= 0 && startRect.right >= (int)SystemParameters.PrimaryScreenWidth)
+
+                screen = Screen.FromPoint(new System.Drawing.Point(hookStruct.pt.X, hookStruct.pt.Y));
+
+           
+                if ((startRect.right - startRect.left) >= screen.Bounds.Width &&
+                    (startRect.bottom - startRect.top) >= screen.Bounds.Height &&
+                    startRect.top <= 0 && startRect.right >= screen.Bounds.Width)
                 {
                     Debug.WriteLine((startRect.right - startRect.left) + "x" + (startRect.bottom - startRect.top) + " [MB 3rd check] Its fullscreen, not gonna attempt to scroll between windows!");
                     return CallNextHookEx(hookIdMouse, nCode, wParam, lParam);
@@ -598,7 +608,7 @@ namespace DragWinWPF
             if (wParam == (IntPtr)WM_MOUSEWHEEL) // Virtual desktop change in the top corners of the screen
             {
 
-                if ((hookStruct.pt.x <= 0 || hookStruct.pt.x >= screenWidth - 1) && hookStruct.pt.y <= 0)
+                if ((hookStruct.pt.X <= 0 || hookStruct.pt.X >= Screen.FromPoint(new System.Drawing.Point(hookStruct.pt.X, hookStruct.pt.Y)).Bounds.Width - 1) && hookStruct.pt.Y <= 0)
                 {
                     //  Debug.WriteLine("OK");
                     if ((short)(hookStruct.mouseData >> 16) < 0)
@@ -670,16 +680,18 @@ namespace DragWinWPF
                 {
                     hWnd = GetAncestor(innerHwnd(lParam), 2);
                 }
-
+                
+                screen = Screen.FromPoint(new System.Drawing.Point(hookStruct.pt.X, hookStruct.pt.Y));
                 int style = GetWindowLong(GetAncestor(innerHwnd(lParam), 2), -16);
+
                 if ((style & WS_OVERLAPPEDWINDOW) == 0)
                 {
                     Debug.WriteLine(" [2nd check] Its fullscreen, not gonna attempt to move it!");
                     return CallNextHookEx(hookIdMouse, nCode, wParam, lParam);
                 }
-                else if ((tempRect.right - tempRect.left) >= (int)SystemParameters.PrimaryScreenWidth &&
-                    (tempRect.bottom - tempRect.top) >= (int)SystemParameters.PrimaryScreenHeight &&
-                    tempRect.top <= 0 && tempRect.right >= (int)SystemParameters.PrimaryScreenWidth)
+                else if ((tempRect.right - tempRect.left) >= screen.Bounds.Width &&
+                    (tempRect.bottom - tempRect.top) >= screen.Bounds.Height &&
+                    tempRect.top <= 0 && tempRect.right >= screen.Bounds.Width)
                 {
                     if (!string.IsNullOrEmpty(parentHwndTitle(lParam)))
                     {
@@ -869,7 +881,7 @@ namespace DragWinWPF
                             GetWindowRect(hWnd, out rect);
                         });
                     }
-                    else if ((int)GetMousePosition().X + 40 >= screenWidth)
+                    else if ((int)GetMousePosition().X + 40 >= Screen.FromPoint(new System.Drawing.Point(hookStruct.pt.X, hookStruct.pt.Y)).Bounds.Width)
                     {
                         Debug.WriteLine("set full right");
                         Task.Run(() =>
@@ -979,9 +991,9 @@ namespace DragWinWPF
                     ShowWindow(hWnd, 9); // Set to normal from maximized
 
                     GetWindowRect(hWnd, out rect);
-                    System.Drawing.Point currentMousePosition = new System.Drawing.Point(hookStruct.pt.x, hookStruct.pt.y);
-                    deltaX = currentMousePosition.X - previousMousePosition.x;
-                    deltaY = currentMousePosition.Y - previousMousePosition.y;
+                    System.Drawing.Point currentMousePosition = new System.Drawing.Point(hookStruct.pt.X, hookStruct.pt.Y);
+                    deltaX = currentMousePosition.X - previousMousePosition.X;
+                    deltaY = currentMousePosition.Y - previousMousePosition.Y;
                     newX = rect.left + deltaX;
                     newY = rect.top + deltaY;
                     width = rect.right - rect.left;
@@ -1083,7 +1095,7 @@ namespace DragWinWPF
                             Canvas canvas = new Canvas();
                             canvas.Children.Add(redRectangle);
                             newWindow.Content = canvas;
-                            System.Drawing.Point cc = new System.Drawing.Point(hookStruct.pt.x, hookStruct.pt.y);
+                            System.Drawing.Point cc = new System.Drawing.Point(hookStruct.pt.X, hookStruct.pt.Y);
 
                             newWindow.Left = cc.X - 10;
                             newWindow.Top = cc.Y - 10;
@@ -1110,27 +1122,32 @@ namespace DragWinWPF
                         }
                         usedFancyZone = true;
                     }
-                    System.Drawing.Point currentMousePosition = new System.Drawing.Point(hookStruct.pt.x, hookStruct.pt.y);
-                    deltaX = currentMousePosition.X - previousMousePosition.x;
-                    deltaY = currentMousePosition.Y - previousMousePosition.y;
+                    System.Drawing.Point currentMousePosition = new System.Drawing.Point(hookStruct.pt.X, hookStruct.pt.Y);
+                    deltaX = currentMousePosition.X - previousMousePosition.X;
+                    deltaY = currentMousePosition.Y - previousMousePosition.Y;
 
                     newX = rect.left + deltaX;
                     newY = rect.top + deltaY;
                     width = rect.right - rect.left;
                     height = rect.bottom - rect.top;
+                    screen = Screen.FromPoint(currentMousePosition);
 
                     if (!canOverflow)
                     {
-                        if (newX + width > SystemParameters.WorkArea.Width) newX = (int)SystemParameters.WorkArea.Width - width;
-                        if (newX < SystemParameters.WorkArea.Left) newX = (int)SystemParameters.WorkArea.Left;
-                        if (newY + height > SystemParameters.WorkArea.Height) newY = (int)(SystemParameters.WorkArea.Height - height);
-                        if (newY < SystemParameters.WorkArea.Top) newY = (int)SystemParameters.WorkArea.Top;
+                        if (newX + width > screen.WorkingArea.Width) newX = (int)screen.WorkingArea.Width - width;
+                        if (newX < screen.WorkingArea.Left) newX = (int)screen.WorkingArea.Left;
+                        if (newY + height > screen.WorkingArea.Height) newY = (int)(screen.WorkingArea.Height - height);
+                        if (newY < screen.WorkingArea.Top) newY = (int)screen.WorkingArea.Top;
                     }
 
-                    if ((int)GetMousePosition().X == 0 || (int)GetMousePosition().X == screenWidth - 1) newX = rect.left;
-                    if ((int)GetMousePosition().Y == 0 || (int)GetMousePosition().Y == screenHeight - 1) newY = rect.top;
+                    if ((int)GetMousePosition().X == 0 || (int)GetMousePosition().X == screen.Bounds.Width - 1) newX = rect.left;
+                    if ((int)GetMousePosition().Y == 0 || (int)GetMousePosition().Y == screen.Bounds.Height - 1) newY = rect.top;
 
-                    MoveWindow(hWnd, newX, newY, width, height, true);
+                    IntPtr hMonitor = MonitorFromPoint(new POINT(hookStruct.pt.X, hookStruct.pt.Y), MONITOR_DEFAULTTONEAREST);
+                    uint dpiX, dpiY;
+                    int result = GetDpiForMonitor(hMonitor, MDT_EFFECTIVE_DPI, out dpiX, out dpiY);
+                    int scale = (int)(dpiX / 96.0);
+                    MoveWindow(hWnd, newX*scale, newY * scale, width * scale, height * scale, true);
 
                 }
 
@@ -1169,10 +1186,10 @@ namespace DragWinWPF
         private static int HitTest(RECT windowRect, POINT pt)
         {
             const int edgeSize = 100;
-            bool left = pt.x >= windowRect.left && pt.x < windowRect.left + edgeSize;
-            bool right = pt.x < windowRect.right && pt.x >= windowRect.right - edgeSize;
-            bool top = pt.y >= windowRect.top && pt.y < windowRect.top + edgeSize;
-            bool bottom = pt.y < windowRect.bottom && pt.y >= windowRect.bottom - edgeSize;
+            bool left = pt.X >= windowRect.left && pt.X < windowRect.left + edgeSize;
+            bool right = pt.X < windowRect.right && pt.X >= windowRect.right - edgeSize;
+            bool top = pt.Y >= windowRect.top && pt.Y < windowRect.top + edgeSize;
+            bool bottom = pt.Y < windowRect.bottom && pt.Y >= windowRect.bottom - edgeSize;
 
             if (left && top) return HTTOPLEFT;
             if (left && bottom) return HTBOTTOMLEFT;
