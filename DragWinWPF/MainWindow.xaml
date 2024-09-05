@@ -18,7 +18,7 @@
     Margin="0,127,0,114">
         <ui:NotifyIcon.Menu>
             <ContextMenu MinWidth="65" MaxWidth="160">
-                <MenuItem Header="🚧 Beta 0.9.18" IsEnabled="False" HorizontalAlignment="Center" Background="{x:Null}" FontFamily="Segoe Print" >
+                <MenuItem Header="🚧 Beta 0.9.20" IsEnabled="False" HorizontalAlignment="Center" Background="{x:Null}" FontFamily="Segoe Print" >
                     <MenuItem.Foreground>
                         <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
                             <GradientStop Color="#FF68D42D" Offset="1"/>
