@@ -812,7 +812,7 @@ namespace DragWinWPF
                             MouseEvent(MouseEventFlags.RightUp);
                             Thread.Sleep(5);
                             new InputSimulator().Keyboard.KeyDown(VirtualKeyCode.ESCAPE);
-                            new InputSimulator().Keyboard.KeyUp(VirtualKeyCode.ESCAPE); // NOTE: temp, but seem good
+                            new InputSimulator().Keyboard.KeyUp(VirtualKeyCode.ESCAPE); // NOTE: temp, but seems good
                         });
                     }
                     //  clickFix = false;
