@@ -1039,7 +1039,7 @@ namespace DragWinWPF
                     }
                     else if (GetFileDescription(hWnd) == "Windows Explorer")
                     {
-                        Debug.WriteLine("moving exp WM fix");
+                       // Debug.WriteLine("moving exp WM fix");
                         Task.Run(() =>
                         {
                             Thread.Sleep(5);
