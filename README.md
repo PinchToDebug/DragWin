@@ -1,5 +1,5 @@
 # Dragwin
-It's an application that lets you move windows **without holding down Alt or Control**, with some extra features.\
+It's an application that lets you move windows **without holding down Alt or Control**, with some extra features.
 
 <a href="#"><img src="https://img.shields.io/github/downloads/PinchToDebug/DragWin/total" alt="Downloads"></a>
 <a href="https://github.com/PinchToDebug/DragWin/releases/latest"><img src="https://img.shields.io/github/v/release/PinchToDebug/DragWin" alt="Version"></a>
@@ -11,6 +11,7 @@ It's an application that lets you move windows **without holding down Alt or Con
 - Resizing windows from the sides and corners
 - Scrolling through windows that are behind the one you start scrolling on _(Hold middle-click down and scroll)_
 - Scrolling between virtual desktops from the top corners
+- Works with FancyZones
 - Doesn't affect fullscreen applications
 - Doesn't affect right-clicking
 
