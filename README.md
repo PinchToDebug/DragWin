@@ -11,7 +11,8 @@ It's an application that lets you move windows **without holding down Alt or Con
 - Resizing windows from the sides and corners
 - Scrolling through windows that are behind the one you start scrolling on _(Hold middle-click down and scroll)_
 - Scrolling between virtual desktops from the top corners
-- Works with FancyZones
+- Option to auto-invoke FancyZones
+- Multi-display support
 - Doesn't affect fullscreen applications
 - Doesn't affect right-clicking
 
