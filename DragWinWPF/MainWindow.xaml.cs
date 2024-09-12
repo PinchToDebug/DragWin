@@ -88,6 +88,7 @@ namespace DragWinWPF
         private static bool startOnLogin = false;
         private static bool canResizeCorners = false;
         private static bool canScrollWindows = false;
+        private static bool AutoFancyZones = false;
 
 
         //logic 
@@ -95,8 +96,9 @@ namespace DragWinWPF
         private static bool hwndCheck = false;
         private static bool rightMouseDown = false;
         private static bool middleMouseDown = false;
-        private static bool usedFancyZone = false;
-        private static bool fancyZoneWasChromium = false;
+        private static bool usedFancyZones = false;
+        private static bool fancyZonesWasChromium = false;
+        private static bool fancyZonesRunning = false;
         // private static bool leftdown = false;
         private static bool doOnce = true;
         private static bool doOnce2 = true;
@@ -167,6 +169,14 @@ namespace DragWinWPF
             if (KeyExists("canResizeCorners")) canResizeCorners = (bool)ReadKeyValue("canResizeCorners");
             if (KeyExists("canScrollWindows")) canScrollWindows = (bool)ReadKeyValue("canScrollWindows");
             if (KeyExists("startOnLogin")) startOnLogin = (bool)ReadKeyValue("startOnLogin");
+           
+            AutoFancyZones_Button.Visibility = Process.GetProcessesByName("PowerToys.FancyZones").Any(p => !p.HasExited) ? Visibility.Visible : Visibility.Collapsed;
+            if (KeyExists("AutoFancyZones") && AutoFancyZones_Button.Visibility == Visibility.Visible) 
+            {   
+                AutoFancyZones = (bool)ReadKeyValue("AutoFancyZones");
+                AutoFancyZones_Button.IsChecked = AutoFancyZones;
+            }
+
 
 
             bringToFront = true; // Other option isn't available
@@ -176,6 +186,7 @@ namespace DragWinWPF
             SetTop_Button.IsChecked = bringToFront;
             Autorun_Button.IsChecked = startOnLogin;
             Enable_Button.IsChecked = enabled;
+       
         }
 
 
@@ -282,20 +293,22 @@ namespace DragWinWPF
                         return 0;
                     }
 
-                    if (prevInnerHwnd != innerHwnd(lParam) && !mouseOutsideHwndWindow(rect) && innerMovedHwndTitle.Contains("Chrome Legacy Window") && legacyFixOnceOnly && parentHwnd(innerHwnd(lParam)) == prevMovedhWnd)
+                    if (legacyFixOnceOnly && prevInnerHwnd != innerHwnd(lParam) && !mouseOutsideHwndWindow(rect) && innerMovedHwndTitle.Contains("Chrome Legacy Window")  && parentHwnd(innerHwnd(lParam)) == prevMovedhWnd)
                     {
                         fixChromiumWindow = false;
-                        Debug.WriteLine("Chrome Legacy Window -> Chrome Legacy Window");
                         legacyFixOnceOnly = false;
-                        Task.Run(() =>
+                        clickFix = false;
+                        Debug.WriteLine("Chrome Legacy Window -> Chrome Legacy Window");
+                        if (!mouseOutsideHwndWindow(rect))
                         {
-                            if (!mouseOutsideHwndWindow(rect))
-                            {
-                                MouseEvent(MouseEventFlags.LeftDown);
-                                MouseEvent(MouseEventFlags.LeftUp);
-                            }
+                            Task.Run(() =>
+                        {
+                            //  MouseEvent(MouseEventFlags.LeftDown);
+                            MouseEvent(MouseEventFlags.LeftUp);
+                            MouseEvent(MouseEventFlags.RightUp); // 0.9.23+ update, cursor doesn't lag
 
                         });
+                        }
                         return 0;
                     }
 
@@ -308,7 +321,7 @@ namespace DragWinWPF
                 }
 
                 // Click fix part
-                if (GetFileDescription(hWnd) == "Windows Explorer" && fixExplorerInside)
+                if (fixExplorerInside && GetFileDescription(hWnd) == "Windows Explorer" )
                 {
                     //  Debug.WriteLine("clickfix explorer | ", innerHwndTitle(lParam));
                     fixExplorerInside = false;
@@ -329,7 +342,7 @@ namespace DragWinWPF
                     return 0;
                 }
 
-                if (bringToFront && !leftWindow /*  '!' ??, but works */ && clickFix)
+                if (!leftWindow && bringToFront  /*  '!' ??, but works */ )
                 {
                     //Debug.WriteLine("in list : " + dontMove.Contains(GetAncestor(innerHwnd(lParam), 2).ToString()));
                     // TODO: Checks whether right click event happened after left the window (bool)
@@ -344,7 +357,6 @@ namespace DragWinWPF
                         Task.Run(() =>
                         {
                             MouseEvent(MouseEventFlags.RightDown | MouseEventFlags.RightUp | MouseEventFlags.LeftDown | MouseEventFlags.LeftUp); // MouseEvent(MouseEventFlags.LeftDown | MouseEventFlags.LeftUp);
-
                         });
                         return 0;
                     }
@@ -354,8 +366,6 @@ namespace DragWinWPF
                         // fixChromiumWindow = true;
                     }
                 }
-
-
 
 
                 // if (!movingWindow && dontMove.Contains(parentHwndTitle(lParam)))  // example: moving a window under the taskbar releasing the mouse
@@ -623,7 +633,7 @@ namespace DragWinWPF
             }
             if (wParam == (IntPtr)WM_LBUTTONDOWN)
             {
-                if (usedFancyZone)
+                if (usedFancyZones)
                 {
                     return -1;
                 }
@@ -657,7 +667,7 @@ namespace DragWinWPF
 
             if (wParam == (IntPtr)WM_LBUTTONUP)
             {
-                if (usedFancyZone)
+                if (usedFancyZones)
                 {
                     return -1;
                 }
@@ -675,6 +685,8 @@ namespace DragWinWPF
                 }
                 hitTestCode = HitTest(rect, hookStruct.pt);
                 GetWindowRect(GetAncestor(innerHwnd(lParam), 2), out RECT tempRect);
+             
+               fancyZonesRunning = Process.GetProcessesByName("PowerToys.FancyZones").Any(p => !p.HasExited) ? true : false;
 
                 if (hwndCheck)
                 {
@@ -829,23 +841,7 @@ namespace DragWinWPF
                     movingWindow = false;
 
 
-                    if (usedFancyZone)
-                    {
-                        GetWindowRect(hWnd, out rect);
-
-                        Debug.WriteLine("FancyZone: off");
-                        usedFancyZone = false;
-                        ReleaseCapture();
-
-                        Task.Run(() =>
-                        {
-                            MouseEvent(MouseEventFlags.LeftDown);
-                            MouseEvent(MouseEventFlags.LeftUp);
-                            Task.Delay(2);
-                            MoveWindow(hWnd, newX, newY, width, height, true);
-                            GetWindowRect(hWnd, out rect);
-                        });
-                    }
+                   
 
                     if (isChromium(hWnd, lParam))
                     {
@@ -858,7 +854,8 @@ namespace DragWinWPF
                         fixChromiumWindow = false;
                     }
                     clickFix = true;
-                    if ((int)GetMousePosition().Y <= 40 | rect.top < 0)
+                    var currScreen = Screen.GetBounds(new System.Drawing.Point(hookStruct.pt.X, hookStruct.pt.Y));
+                    if (hookStruct.pt.Y <= 40 | rect.top < 0 && !usedFancyZones)
                     {
                         Debug.WriteLine("set full");
                         Task.Run(() =>
@@ -868,7 +865,7 @@ namespace DragWinWPF
                             GetWindowRect(hWnd, out rect);
                         });
                     }
-                    else if ((int)GetMousePosition().X <= 40)
+                    else if (hookStruct.pt.X <= currScreen.X + 40 && !usedFancyZones)
                     {
                         Debug.WriteLine("set full left");
                         Task.Run(() =>
@@ -881,7 +878,7 @@ namespace DragWinWPF
                             GetWindowRect(hWnd, out rect);
                         });
                     }
-                    else if ((int)GetMousePosition().X + 40 >= Screen.FromPoint(new System.Drawing.Point(hookStruct.pt.X, hookStruct.pt.Y)).Bounds.Width)
+                    else if (hookStruct.pt.X - Screen.GetBounds(new System.Drawing.Point(hookStruct.pt.X, hookStruct.pt.Y)).X + 40 >= currScreen.Width && !usedFancyZones)
                     {
                         Debug.WriteLine("set full right");
                         Task.Run(() =>
@@ -894,7 +891,28 @@ namespace DragWinWPF
                             GetWindowRect(hWnd, out rect);
                         });
                     }
+                    if (usedFancyZones)
+                    {
+                        GetWindowRect(hWnd, out rect);
 
+                        Debug.WriteLine("FancyZone: off");
+                        usedFancyZones = false;
+                        ReleaseCapture();
+
+                        Task.Run(() =>
+                        {
+                            MouseEvent(MouseEventFlags.LeftDown);
+                            MouseEvent(MouseEventFlags.LeftUp);
+                            Task.Delay(2);
+                            MoveWindow(hWnd, newX, newY, width, height, true);
+                            GetWindowRect(hWnd, out rect);
+                            if (AutoFancyZones)
+                            {
+                                new InputSimulator().Keyboard.KeyUp(VirtualKeyCode.LSHIFT);
+                                Debug.WriteLine("SHIFT UP");
+                            }
+                        });
+                    }
                     return -1;
                 }
 
@@ -912,8 +930,8 @@ namespace DragWinWPF
 
 
             if (wParam == (IntPtr)WM_MOUSEMOVE && rightMouseDown && (
-                    Math.Abs(initialMouseClickPosition.Y - (int)GetMousePosition().Y) > 3 |
-                    Math.Abs(initialMouseClickPosition.X - (int)GetMousePosition().X) > 3))
+                    Math.Abs(initialMouseClickPosition.Y - hookStruct.pt.Y) > 3 |
+                    Math.Abs(initialMouseClickPosition.X - hookStruct.pt.X) > 3))
             {
 
                 if (hwndCheck)
@@ -1005,19 +1023,19 @@ namespace DragWinWPF
                         if (rect.top <= 0)
                         {
                             Debug.WriteLine("normalize: 1");
-                            MoveWindow(hWnd, (int)GetMousePosition().X - width / 2, 0, width, height, true);
+                            MoveWindow(hWnd, hookStruct.pt.X - width / 2, 0, width, height, true);
                         }
                         else
                         {
                             Debug.WriteLine("normalize: 2");
-                            MoveWindow(hWnd, (int)GetMousePosition().X - width / 2, (int)GetMousePosition().Y - height / 2, width, height, true);
+                            MoveWindow(hWnd, hookStruct.pt.X - width / 2, hookStruct.pt.Y - height / 2, width, height, true);
                         }
                     }
 
                     if (rect.top <= 0 && rect.left >= 1)
                     {
                         Debug.WriteLine("normalize: 3");
-                        MoveWindow(hWnd, (int)GetMousePosition().X - width / 2, 0, width, height, true);
+                        MoveWindow(hWnd, hookStruct.pt.X - width / 2, 0, width, height, true);
                     }
                     if (rect.top <= 1 && rect.left <= 0)
                     {
@@ -1072,15 +1090,22 @@ namespace DragWinWPF
 
                 if (!reSizing)
                 {
-                    if ((GetAsyncKeyState(0x10) & 0x8000) != 0) // If shift is down [FancyZone support]
+                    if (fancyZonesRunning && ((GetAsyncKeyState(0x10) & 0x8000) != 0 | AutoFancyZones)) // If shift is down [FancyZones support]
                     {
-                        Debug.WriteLine("FancyZone: activated?");
 
+                        if (AutoFancyZones && (GetAsyncKeyState(0x10) & 0x8000) == 0)
+                        {
+                            Debug.WriteLine("SHIFT DOWN ONCE");
+                            Task.Run(() =>
+                            {
+                                new InputSimulator().Keyboard.KeyDown(VirtualKeyCode.LSHIFT);
+                            });
+                        }
                         int WM_SYSCOMMAND = 0x112;
                         int SC_MOVE = 0xF010;
                         IntPtr _hwnd = FindWindowEx(0, 0, null, parentHwndTitle(hWnd));
                         PostMessage(_hwnd, WM_SYSCOMMAND, SC_MOVE, lParam);
-                        if (isChromium(_hwnd, lParam) && !usedFancyZone)
+                        if (isChromium(_hwnd, lParam) && !usedFancyZones)
                         {
                             Debug.WriteLine("FancyZone: is chrome");
                             Window newWindow = new Window();
@@ -1120,7 +1145,11 @@ namespace DragWinWPF
                             newWindow.Close();
 
                         }
-                        usedFancyZone = true;
+                        usedFancyZones = true;
+                    }
+                    else
+                    {
+                       // usedFancyZones = false;
                     }
                     System.Drawing.Point currentMousePosition = new System.Drawing.Point(hookStruct.pt.X, hookStruct.pt.Y);
                     deltaX = currentMousePosition.X - previousMousePosition.X;
@@ -1140,8 +1169,8 @@ namespace DragWinWPF
                         if (newY < screen.WorkingArea.Top) newY = (int)screen.WorkingArea.Top;
                     }
 
-                    if ((int)GetMousePosition().X == 0 || (int)GetMousePosition().X == screen.Bounds.Width - 1) newX = rect.left;
-                    if ((int)GetMousePosition().Y == 0 || (int)GetMousePosition().Y == screen.Bounds.Height - 1) newY = rect.top;
+                    if (hookStruct.pt.X == 0 || hookStruct.pt.X == screen.Bounds.Width - 1) newX = rect.left;
+                    if (hookStruct.pt.Y == 0 || hookStruct.pt.Y == screen.Bounds.Height - 1) newY = rect.top;
 
                     IntPtr hMonitor = MonitorFromPoint(new POINT(hookStruct.pt.X, hookStruct.pt.Y), MONITOR_DEFAULTTONEAREST);
                     uint dpiX, dpiY;
@@ -1331,6 +1360,11 @@ namespace DragWinWPF
             WriteKey(Corner_Button, nameof(canOverflow), ref canOverflow);
         }
 
+        private void AutoFancyZones_Button_Checked(object sender, RoutedEventArgs e)
+        {
+            WriteKey(AutoFancyZones_Button, nameof(AutoFancyZones), ref AutoFancyZones);
+
+        }
         private void ExitApp(object sender, RoutedEventArgs e)
         {
             Application.Current.Shutdown();
@@ -1459,7 +1493,15 @@ namespace DragWinWPF
             Exit_Button.Foreground = new SolidColorBrush(Color.FromArgb(255, 254, 107, 107));
         }
 
-
+        private void TrayIcon_RightClick(Wpf.Ui.Tray.Controls.NotifyIcon sender, RoutedEventArgs e)
+        {
+            AutoFancyZones_Button.Visibility = Process.GetProcessesByName("PowerToys.FancyZones").Any(p => !p.HasExited) ? Visibility.Visible : Visibility.Collapsed;
+            if (KeyExists("AutoFancyZones") && Process.GetProcessesByName("PowerToys.FancyZones") != null)
+            {
+                AutoFancyZones = (bool)ReadKeyValue("AutoFancyZones");
+                AutoFancyZones_Button.IsChecked = AutoFancyZones;
+            }
+        }
 
         private void Exit_Button_MouseLeave(object sender, MouseEventArgs e)
         {
