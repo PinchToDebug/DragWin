@@ -1137,11 +1137,12 @@ namespace DragWinWPF
                             IntPtr hwnd = new WindowInteropHelper(newWindow).Handle;
                             Task.Run(() =>
                             {
-                               SendMessage(hwnd, WM_LBUTTONDOWN, IntPtr.Zero, IntPtr.Zero);
-                               SendMessage(hwnd, WM_LBUTTONUP, IntPtr.Zero, IntPtr.Zero);
+                                SendMessage(hwnd, WM_LBUTTONDOWN, IntPtr.Zero, IntPtr.Zero);
+                                SendMessage(hwnd, WM_LBUTTONUP, IntPtr.Zero, IntPtr.Zero);
                             });
 
                             Task.Delay(20);
+                            //TODO: az a fel egér kell és a végén meg ki kéne szedni
                             newWindow.Close();
 
                         }
