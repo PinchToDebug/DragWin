@@ -27,6 +27,7 @@ namespace DragWinWPF
     {
         [DllImport("user32.dll")]
         public static extern IntPtr GetWindow(IntPtr hWnd, uint uCmd);
+
         // mutex
         // -----------------
         private const string mutexId = "{47bb6j6d-l38e-4bb5-92jb-a239cr17bj9e}";
