@@ -13,8 +13,16 @@ It's an application that lets you move windows **without holding down Alt or Con
 - Scrolling between virtual desktops from the top corners
 - Option to auto-invoke FancyZones
 - Multi-display support
+- Scrolling with middle-mouse button between displays
 - Doesn't affect fullscreen applications
 - Doesn't affect right-clicking
+
+## 🖼️ Preview
+
+https://github.com/user-attachments/assets/4230b7e8-a1de-4766-91bd-20c9a2b85a1e
+
+https://github.com/user-attachments/assets/cdb68e00-e086-44e6-85c2-d8198305e6e0
+
 
 ## 🤝 Contributing
 Contributions are welcome! If you have an idea for a feature or find a bug, please open an issue or submit a pull request!
@@ -24,4 +32,4 @@ This started as a proof of concept, so navigating the source code might be chall
 
 ## 📜 License
 
-The project is built with [WPF UI](https://github.com/lepoco/wpfui) and [Input Simulator](https://github.com/michaelnoonan/inputsimulator), both licensed under the [MIT License](https://github.com/lepoco/wpfui/blob/main/LICENSE).
+The project is built with [WPF UI](https://github.com/lepoco/wpfui), [Input Simulator](https://github.com/michaelnoonan/inputsimulator) and [Windows Community Toolkit](https://github.com/CommunityToolkit/WindowsCommunityToolkit/tree/main), all licensed under the [MIT License](https://github.com/lepoco/wpfui/blob/main/LICENSE).
