@@ -100,6 +100,7 @@ namespace DragWin
         private static bool canScrollWindows = false;
         private static bool AutoFancyZones = false;
         private static bool WheelGesture = false;
+        private static bool OpacityScrolling = false;
 
 
         //logic 
@@ -146,7 +147,7 @@ namespace DragWin
         private static int width;
         private static int height;
         private static string exePath = "";
-        private static string[] dontMove = { /*"",*/"", "Quick settings", "EarTrumpet", "Notification Overflow", "Task Switching", "Program Manager", "Start", "Notification Center", "Ear Trumpet", "Task Manager", "Windows Input Experience" };
+        private static string[] dontMove = {/*"",*/ "Windows Shell Experience Host", "New notification", "System tray overflow window.", "Quick settings", "EarTrumpet", "Notification Overflow", "Task Switching", "Program Manager", "Start", "Notification Center", "Ear Trumpet", "Task Manager", "Windows Input Experience" };
 
 
 
@@ -170,7 +171,7 @@ namespace DragWin
             {
                 MessageBox.Show("Couldn't get the executable's path.");
             }
-            
+
 
             InitializeComponent();
             versionHeader.Header += Process.GetCurrentProcess().MainModule.FileVersionInfo.FileVersion.ToString();
@@ -178,6 +179,7 @@ namespace DragWin
 
             if (KeyExists("canOverflow")) canOverflow = (bool)ReadKeyValue("canOverflow");
             else canOverflow = true;
+            if (KeyExists("OpacityScrolling")) OpacityScrolling = (bool)ReadKeyValue("OpacityScrolling");
             if (KeyExists("WheelGesture")) WheelGesture = (bool)ReadKeyValue("WheelGesture");
             if (KeyExists("bringToFront")) bringToFront = (bool)ReadKeyValue("bringToFront");
             if (KeyExists("enabled")) enabled = (bool)ReadKeyValue("enabled");
@@ -197,6 +199,7 @@ namespace DragWin
             bringToFront = true; // Other option isn't available
             Resize_Button.IsChecked = canResizeCorners;
             Corner_Button.IsChecked = canOverflow;
+            Opacity_Button.IsChecked = OpacityScrolling;
             WheelGesture_Button.IsChecked = WheelGesture;
             ScrollWindows_Button.IsChecked = canScrollWindows;
             SetTop_Button.IsChecked = bringToFront;
@@ -656,6 +659,49 @@ namespace DragWin
                         SimulateKeyPress(VirtualKeyCode.LWIN, VirtualKeyCode.CONTROL, VirtualKeyCode.RIGHT);
                     }
                 }
+                if (OpacityScrolling && (GetAsyncKeyState(0x12) & 0x8000) != 0) // if Alt is down
+                {
+                    IntPtr _hwnd = GetAncestor(innerHwnd(lParam), 2);
+                    if (dontMove.Contains(GetWindowTitle(_hwnd)) | string.IsNullOrEmpty(GetWindowTitle(_hwnd)))
+                    {
+                        return 0;
+                    }
+                    int GWL_EXSTYLE = -20;
+                    int WS_EX_LAYERED = 0x80000;
+                    int LWA_ALPHA = 0x2;
+                    int style = GetWindowLong(_hwnd, GWL_EXSTYLE);
+                    GetLayeredWindowAttributes(_hwnd, out uint crKey, out byte alpha, out uint dwFlags);
+
+                    if ((short)(hookStruct.mouseData >> 16) < 0)
+                    {
+                        if (alpha - 20 >= 30)
+                        {
+                            alpha -= 20;
+                        }
+                        else if (alpha != 0)
+                        {
+                            alpha = 20;
+                        }
+                        else
+                        {
+                            alpha = 255 - 20;
+                        }
+                    }
+                    else
+                    {
+                        if (alpha + 20 <= 255 && alpha != 0)
+                        {
+                            alpha += 20;
+                        }
+                        else
+                        {
+                            alpha = 255;
+                        }
+                    }
+                    SetWindowLong(_hwnd, GWL_EXSTYLE, style | WS_EX_LAYERED);
+                    SetLayeredWindowAttributes(_hwnd, 0, alpha, (uint)LWA_ALPHA);
+                    return -1;
+                }
             }
 
             if (wParam == (IntPtr)WM_MOUSEWHEEL && middleMouseDownHasCount && windowOrder.Count > 0 && canScrollWindows)
@@ -764,7 +810,6 @@ namespace DragWin
                 {
                     if (!string.IsNullOrEmpty(parentHwndTitle(lParam)))
                     {
-                        MessageBox.Show("t");
                         Debug.WriteLine((tempRect.right - tempRect.left) + "x" + (tempRect.bottom - tempRect.top) + " [RB 3rd check] Its fullscreen, not gonna attempt to move it!");
                         return CallNextHookEx(hookIdMouse, nCode, wParam, lParam);
                     }
@@ -1425,7 +1470,10 @@ namespace DragWin
         {
             WriteKey(WheelGesture_Button, nameof(WheelGesture), ref WheelGesture);
         }
-
+        private void Opacity_Button_Checked(object sender, RoutedEventArgs e)
+        {
+            WriteKey(Opacity_Button, nameof(OpacityScrolling), ref OpacityScrolling);
+        }
         private void AutoFancyZones_Button_Checked(object sender, RoutedEventArgs e)
         {
             WriteKey(AutoFancyZones_Button, nameof(AutoFancyZones), ref AutoFancyZones);
@@ -1567,6 +1615,11 @@ namespace DragWin
                 AutoFancyZones = (bool)ReadKeyValue("AutoFancyZones");
                 AutoFancyZones_Button.IsChecked = AutoFancyZones;
             }
+        }
+
+        private void Update_Button_Click(object sender, RoutedEventArgs e)
+        {
+            Update();
         }
 
         private void Exit_Button_MouseLeave(object sender, MouseEventArgs e)

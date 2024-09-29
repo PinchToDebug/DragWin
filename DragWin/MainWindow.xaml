@@ -26,8 +26,9 @@
                         </LinearGradientBrush>
                     </MenuItem.Foreground>
                 </MenuItem>
-
+                <MenuItem x:Name="Update_Button" Header="Check for Updates" Click="Update_Button_Click" Foreground="#FF91EF78" VerticalAlignment="Center" HorizontalAlignment="Center" />
                 <MenuItem x:Name="Enable_Button" Header="Enable" IsCheckable="True"  Checked="Enable_Checked"  Unchecked="Enable_Checked" IsChecked="True" />
+               
                 <MenuItem x:Name="Autorun_Button" Header="Start on login" IsCheckable="True" Checked="StartLogin_Checked"  Unchecked="StartLogin_Checked"  />
 
                 <Separator></Separator>
@@ -37,6 +38,7 @@
                 <MenuItem x:Name="AutoFancyZones_Button" Header="Auto FancyZones" IsCheckable="True" Unchecked="AutoFancyZones_Button_Checked" Checked="AutoFancyZones_Button_Checked"   />
                 <MenuItem x:Name="Corner_Button" Header="Screen overflow" IsCheckable="True" Checked="Corner_Button_Checked"  Unchecked="Corner_Button_Checked"  />
                 <MenuItem x:Name="WheelGesture_Button" Header="Wheel gesture" IsCheckable="True" Checked="WheelGesture_Button_Checked"  Unchecked="WheelGesture_Button_Checked"  />
+                <MenuItem x:Name="Opacity_Button" Header="Opacity scrolling" IsCheckable="True" Checked="Opacity_Button_Checked"  Unchecked="Opacity_Button_Checked"  />
                 <MenuItem x:Name="Exit_Button"  Header="Exit" Click="ExitApp" FontSize="16" MouseEnter="Exit_Button_MouseEnter" VerticalAlignment="Center" MouseLeave="Exit_Button_MouseLeave" />
             
             

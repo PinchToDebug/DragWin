@@ -9,6 +9,7 @@ namespace DragWin
     {
         private static string _url = "";
         private static string _downloadUrl = "";
+        private static int updateCount = 0;
         public static async Task CheckUpdateAsync(string url)
         {
             _url = url;
@@ -52,22 +53,26 @@ namespace DragWin
                                      .SetBackgroundActivation());
                             toastBuilder.Show();
                         }
-                        else
+                        else if (updateCount != 0)
                         {
                             var toastBuilder = new ToastContentBuilder()
                                .AddText($"You are up to date!", AdaptiveTextStyle.Header)
-                               .AddText($"There is no available update.", AdaptiveTextStyle.Body)
-                               .AddButton(new ToastButton()
-                                   .SetContent("Close")
-                                   .AddArgument("action", "close")
-                                   .SetBackgroundActivation());
+                               .AddText($"There is no available update.", AdaptiveTextStyle.Body);
                             toastBuilder.Show();
                         }
                     }
                 }
+                updateCount++;
             }
             catch (Exception e)
             {
+                if (updateCount != 0)
+                {
+                    var toastBuilder = new ToastContentBuilder()
+                               .AddText($"Failed to update.", AdaptiveTextStyle.Header)
+                               .AddText(e.Message, AdaptiveTextStyle.Body);
+                    toastBuilder.Show();
+                }
                 Debug.WriteLine($"Update error: {e.Message}");
             }
         }
