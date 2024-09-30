@@ -14,6 +14,7 @@ It's an application that lets you move windows **without holding down Alt or Con
 - Option to auto-invoke FancyZones
 - Multi-display support
 - Scrolling with middle-mouse button between displays
+- Option to change a window's opacity while holding down Alt.
 - Doesn't affect fullscreen applications
 - Doesn't affect right-clicking
 
