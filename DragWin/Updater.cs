@@ -41,14 +41,14 @@ namespace DragWin
                         if (!latestVersion.Contains(currentVersion))
                         {
                             var toastBuilder = new ToastContentBuilder()
-                                 .AddText($"{emoji} New release! {name}", AdaptiveTextStyle.Header)
+                                 .AddText($"{emoji} {Properties.Lang.Toast_release_available} {name}", AdaptiveTextStyle.Header)
                                  .AddText(description, AdaptiveTextStyle.Body)
                                  .AddButton(new ToastButton()
-                                     .SetContent("Install")
+                                     .SetContent(Properties.Lang.Toast_release_install)
                                      .AddArgument("action", "install_update")
                                      .SetBackgroundActivation())
                                  .AddButton(new ToastButton()
-                                     .SetContent("Close")
+                                     .SetContent(Properties.Lang.Toast_release_close)
                                      .AddArgument("action", "close")
                                      .SetBackgroundActivation());
                             toastBuilder.Show();
@@ -56,8 +56,8 @@ namespace DragWin
                         else if (updateCount != 0)
                         {
                             var toastBuilder = new ToastContentBuilder()
-                               .AddText($"You are up to date!", AdaptiveTextStyle.Header)
-                               .AddText($"There is no available update.", AdaptiveTextStyle.Body);
+                               .AddText(Properties.Lang.Toast_release_noavailable_header, AdaptiveTextStyle.Header)
+                               .AddText(Properties.Lang.Toast_release_noavailable_body, AdaptiveTextStyle.Body);
                             toastBuilder.Show();
                         }
                     }
@@ -69,7 +69,7 @@ namespace DragWin
                 if (updateCount != 0)
                 {
                     var toastBuilder = new ToastContentBuilder()
-                               .AddText($"Failed to update.", AdaptiveTextStyle.Header)
+                               .AddText(Properties.Lang.Toast_update_failed, AdaptiveTextStyle.Header)
                                .AddText(e.Message, AdaptiveTextStyle.Body);
                     toastBuilder.Show();
                 }

@@ -156,7 +156,7 @@ namespace DragWin
 
         public MainWindow()
         {
-            
+
             mutex = new Mutex(true, mutexId, out bool createdNew);
             if (!createdNew)
             {
@@ -169,7 +169,7 @@ namespace DragWin
             }
             catch
             {
-                MessageBox.Show("Couldn't get the executable's path.");
+                MessageBox.Show(Properties.Lang.Message_error_executable);
             }
 
 
@@ -273,7 +273,7 @@ namespace DragWin
             }
             catch
             {
-                MessageBox.Show("error setting hookStruct");
+                MessageBox.Show(Properties.Lang.Message_error_hookstruct);
             }
             GetWindowRect(GetAncestor(innerHwnd(lParam), 2), out rect);
             leftWindow = mouseOutsideHwndWindow(rect);
@@ -1366,7 +1366,7 @@ namespace DragWin
             }
             catch (Exception)
             {
-                MessageBox.Show("error getting window handle's title");
+                MessageBox.Show(Properties.Lang.Message_error_window_title);
             }
             return GetWindowTitle(WindowFromPoint(hs.pt));
         }
@@ -1395,7 +1395,7 @@ namespace DragWin
             }
             catch (Exception)
             {
-                MessageBox.Show("Error getting window handle");
+                MessageBox.Show(Properties.Lang.Message_error_window_handle);
             }
             return WindowFromPoint(hs.pt);
         }
@@ -1525,7 +1525,7 @@ namespace DragWin
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error reading key: " + ex.Message);
+                MessageBox.Show(Properties.Lang.Message_error_read_key + ": " + ex.Message);
                 return false;
             }
         }
@@ -1567,7 +1567,7 @@ namespace DragWin
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error adding to autorun: " + ex.Message);
+                MessageBox.Show(Properties.Lang.Message_error_autorun_add + ": " + ex.Message);
             }
         }
 
@@ -1583,7 +1583,7 @@ namespace DragWin
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error removing from autorun: " + ex.Message);
+                MessageBox.Show(Properties.Lang.Message_error_autorun_remove + ": " + ex.Message);
             }
         }
 
