@@ -32,15 +32,15 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="Properties\Lang.ja-jp.Designer.cs">
-      <DependentUpon>Lang.ja-jp.resx</DependentUpon>
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-    </Compile>
     <Compile Update="Properties\Lang.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
       <DependentUpon>Lang.resx</DependentUpon>
+    </Compile>
+    <Compile Update="Properties\Lang.ja-jp.Designer.cs">
+      <DependentUpon>Lang.ja-jp.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
     </Compile>
   </ItemGroup>
 
