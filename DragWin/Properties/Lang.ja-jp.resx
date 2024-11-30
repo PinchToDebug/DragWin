@@ -178,7 +178,7 @@
     <value>FancyZones連携</value>
   </data>
   <data name="NotifyIcon.overflow" xml:space="preserve">
-    <value>マルチモニター対応</value>
+    <value>画面外への移動</value>
   </data>
   <data name="NotifyIcon.wheel" xml:space="preserve">
     <value>仮想デスクトップ</value>
@@ -187,6 +187,6 @@
     <value>ウィンドウ透過度</value>
   </data>
   <data name="NotifyIcon.settop" xml:space="preserve">
-    <value>最前面を使用</value>
+    <value>最前面で移動</value>
   </data>
 </root>
