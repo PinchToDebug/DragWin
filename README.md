@@ -13,7 +13,8 @@ It's an application that lets you move windows **without holding down Alt or Con
 - Scrolling between virtual desktops from the top corners
 - Option to auto-invoke FancyZones
 - Multi-display support
-- Scrolling with middle-mouse button between displays
+- Scroll wheel drag to switch between virtual desktops
+- Win + Scrolling to switch between virtual desktops
 - Option to change a window's opacity while holding down Alt.
 - Multi-language support
 - Doesn't affect fullscreen applications
