@@ -18,7 +18,7 @@
     Icon="Icon\default.ico"
     Margin="0,127,0,114" RightClick="TrayIcon_RightClick">
         <ui:NotifyIcon.Menu>
-            <ContextMenu MinWidth="65" MaxWidth="160">
+            <ContextMenu MinWidth="65">
                 <MenuItem Name="versionHeader" Header="🚧 Beta " IsEnabled="False" HorizontalAlignment="Center" Background="{x:Null}" FontFamily="Segoe Print" >
                     <MenuItem.Foreground>
                         <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
