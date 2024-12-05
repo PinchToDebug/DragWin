@@ -192,4 +192,31 @@
   <data name="NotifyIcon.desktopScrolling" xml:space="preserve">
     <value>デスクトップのスクロール</value>
   </data>
+  <data name="NotifyIcon.desktopScrolling.subText" xml:space="preserve">
+    <value>Win + スクロールホイール</value>
+  </data>
+  <data name="NotifyIcon.desktopScrolling.tooltip" xml:space="preserve">
+    <value>ショートカットでウィンドウの透明度を調整します。</value>
+  </data>
+  <data name="NotifyIcon.overflow.tooltip" xml:space="preserve">
+    <value>ウィンドウのドラッグを画面外に制限します。</value>
+  </data>
+  <data name="NotifyIcon_opacity.subText" xml:space="preserve">
+    <value>Alt + スクロールホイール</value>
+  </data>
+  <data name="NotifyIcon_opacity.tooltip" xml:space="preserve">
+    <value>ショートカットで仮想デスクトップを切り替えます。</value>
+  </data>
+  <data name="NotifyIcon_scroll.subText" xml:space="preserve">
+    <value>ホイールダウン + スクロール</value>
+  </data>
+  <data name="NotifyIcon_scroll.tooltip" xml:space="preserve">
+    <value>背景のウィンドウを切り替えます。</value>
+  </data>
+  <data name="NotifyIcon_wheel.subText" xml:space="preserve">
+    <value>ホイールダウン + L/Rドラッグ</value>
+  </data>
+  <data name="NotifyIcon_wheel.tooltip" xml:space="preserve">
+    <value>スクロールホイールで仮想デスクトップを切り替えます。</value>
+  </data>
 </root>

@@ -151,6 +151,24 @@ namespace DragWin.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Win + Scroll Wheel.
+        /// </summary>
+        public static string NotifyIcon_desktopScrolling_subText {
+            get {
+                return ResourceManager.GetString("NotifyIcon.desktopScrolling.subText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Adjust the transparency of windows with a shortcut..
+        /// </summary>
+        public static string NotifyIcon_desktopScrolling_tooltip {
+            get {
+                return ResourceManager.GetString("NotifyIcon.desktopScrolling.tooltip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Enable.
         /// </summary>
         public static string NotifyIcon_enable {
@@ -187,11 +205,38 @@ namespace DragWin.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Alt + Scroll Wheel.
+        /// </summary>
+        public static string NotifyIcon_opacity_subText {
+            get {
+                return ResourceManager.GetString("NotifyIcon_opacity.subText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Switch between virtual desktops with a shortcut..
+        /// </summary>
+        public static string NotifyIcon_opacity_tooltip {
+            get {
+                return ResourceManager.GetString("NotifyIcon_opacity.tooltip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Screen overflow.
         /// </summary>
         public static string NotifyIcon_overflow {
             get {
                 return ResourceManager.GetString("NotifyIcon.overflow", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Restrict window drag to screen bounds..
+        /// </summary>
+        public static string NotifyIcon_overflow_tooltip {
+            get {
+                return ResourceManager.GetString("NotifyIcon.overflow.tooltip", resourceCulture);
             }
         }
         
@@ -214,6 +259,24 @@ namespace DragWin.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Wheel down + Scrolling.
+        /// </summary>
+        public static string NotifyIcon_scroll_subText {
+            get {
+                return ResourceManager.GetString("NotifyIcon_scroll.subText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Switch between background windows..
+        /// </summary>
+        public static string NotifyIcon_scroll_tooltip {
+            get {
+                return ResourceManager.GetString("NotifyIcon_scroll.tooltip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Set window top.
         /// </summary>
         public static string NotifyIcon_settop {
@@ -228,6 +291,24 @@ namespace DragWin.Properties {
         public static string NotifyIcon_wheel {
             get {
                 return ResourceManager.GetString("NotifyIcon.wheel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Wheel down + L/R drag.
+        /// </summary>
+        public static string NotifyIcon_wheel_subText {
+            get {
+                return ResourceManager.GetString("NotifyIcon_wheel.subText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Switch virtual desktops with the scroll wheel..
+        /// </summary>
+        public static string NotifyIcon_wheel_tooltip {
+            get {
+                return ResourceManager.GetString("NotifyIcon_wheel.tooltip", resourceCulture);
             }
         }
         

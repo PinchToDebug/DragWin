@@ -192,4 +192,31 @@
   <data name="NotifyIcon.desktopScrolling" xml:space="preserve">
     <value>Desktop Scrolling</value>
   </data>
+  <data name="NotifyIcon.desktopScrolling.subText" xml:space="preserve">
+    <value>Win + Scroll Wheel</value>
+  </data>
+  <data name="NotifyIcon.desktopScrolling.tooltip" xml:space="preserve">
+    <value>Adjust the transparency of windows with a shortcut.</value>
+  </data>
+  <data name="NotifyIcon.overflow.tooltip" xml:space="preserve">
+    <value>Restrict window drag to screen bounds.</value>
+  </data>
+  <data name="NotifyIcon_opacity.subText" xml:space="preserve">
+    <value>Alt + Scroll Wheel</value>
+  </data>
+  <data name="NotifyIcon_opacity.tooltip" xml:space="preserve">
+    <value>Switch between virtual desktops with a shortcut.</value>
+  </data>
+  <data name="NotifyIcon_scroll.subText" xml:space="preserve">
+    <value>Wheel down + Scrolling</value>
+  </data>
+  <data name="NotifyIcon_scroll.tooltip" xml:space="preserve">
+    <value>Switch between background windows.</value>
+  </data>
+  <data name="NotifyIcon_wheel.subText" xml:space="preserve">
+    <value>Wheel down + L/R drag</value>
+  </data>
+  <data name="NotifyIcon_wheel.tooltip" xml:space="preserve">
+    <value>Switch virtual desktops with the scroll wheel.</value>
+  </data>
 </root>

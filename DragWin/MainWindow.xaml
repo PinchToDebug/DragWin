@@ -29,22 +29,71 @@
                 </MenuItem>
                 <MenuItem x:Name="Update_Button" Header="{x:Static prop:Lang.NotifyIcon_check_update}" Click="Update_Button_Click" Foreground="#FF91EF78" VerticalAlignment="Center" HorizontalAlignment="Center" />
                 <MenuItem x:Name="Enable_Button" Header="{x:Static prop:Lang.NotifyIcon_enable}" IsCheckable="True"  Checked="Enable_Checked"  Unchecked="Enable_Checked" IsChecked="True" />
-               
                 <MenuItem x:Name="Autorun_Button" Header="{x:Static prop:Lang.NotifyIcon_autorun}" IsCheckable="True" Checked="StartLogin_Checked"  Unchecked="StartLogin_Checked"  />
 
                 <Separator></Separator>
-                <MenuItem x:Name="SetTop_Button" Header="{x:Static prop:Lang.NotifyIcon_settop}" IsEnabled="False" IsCheckable="True" Checked="SetTop_Button_Checked"  Unchecked="SetTop_Button_Checked" />
-                <MenuItem x:Name="ScrollWindows_Button" Header="{x:Static prop:Lang.NotifyIcon_scroll}" IsCheckable="True" Checked="ScrollWindows_Button_Checked"  Unchecked="ScrollWindows_Button_Checked"  />
+                <MenuItem x:Name="SetTop_Button" Visibility="Collapsed" Header="{x:Static prop:Lang.NotifyIcon_settop}" IsEnabled="False" IsCheckable="True" Checked="SetTop_Button_Checked"  Unchecked="SetTop_Button_Checked" />
+                <MenuItem x:Name="ScrollWindows_Button" IsCheckable="True" Checked="ScrollWindows_Button_Checked"  Unchecked="ScrollWindows_Button_Checked" >
+                    <MenuItem.Header>
+                        <StackPanel>
+                            <TextBlock Text="{x:Static prop:Lang.NotifyIcon_scroll}" />
+                            <TextBlock Text="{x:Static prop:Lang.NotifyIcon_scroll_subText}"  FontStyle="Italic" FontSize="11" Foreground="Gray"/>
+                        </StackPanel>
+                    </MenuItem.Header>
+                    <MenuItem.ToolTip>
+                        <ToolTip Content="{x:Static prop:Lang.NotifyIcon_scroll_tooltip}" />
+                    </MenuItem.ToolTip>
+                </MenuItem>
+
                 <MenuItem x:Name="Resize_Button" Header="{x:Static prop:Lang.NotifyIcon_resize}" IsCheckable="True" Checked="Resize_Button_Checked"  Unchecked="Resize_Button_Checked"  />
+                
                 <MenuItem x:Name="AutoFancyZones_Button" Header="{x:Static prop:Lang.NotifyIcon_fancyzones}" IsCheckable="True" Unchecked="AutoFancyZones_Button_Checked" Checked="AutoFancyZones_Button_Checked"   />
-                <MenuItem x:Name="Corner_Button" Header="{x:Static prop:Lang.NotifyIcon_overflow}" IsCheckable="True" Checked="Corner_Button_Checked"  Unchecked="Corner_Button_Checked"  />
-                <MenuItem x:Name="WheelGesture_Button" Header="{x:Static prop:Lang.NotifyIcon_wheel}" IsCheckable="True" Checked="WheelGesture_Button_Checked"  Unchecked="WheelGesture_Button_Checked"  />
-                <MenuItem x:Name="Opacity_Button" Header="{x:Static prop:Lang.NotifyIcon_opacity}" IsCheckable="True" Checked="Opacity_Button_Checked"  Unchecked="Opacity_Button_Checked"  />
-                <MenuItem x:Name="DesktopScrolling_Button" Header="{x:Static prop:Lang.NotifyIcon_desktopScrolling}" IsCheckable="True" Checked="DesktopScrolling_Button_Checked"  Unchecked="DesktopScrolling_Button_Checked" />
+                <MenuItem x:Name="Corner_Button" Header="{x:Static prop:Lang.NotifyIcon_overflow}" IsCheckable="True" Checked="Corner_Button_Checked"  Unchecked="Corner_Button_Checked" >
+                    <MenuItem.ToolTip>
+                        <ToolTip Content="{x:Static prop:Lang.NotifyIcon_overflow_tooltip}" />
+                    </MenuItem.ToolTip>
+                </MenuItem>
+                <MenuItem x:Name="WheelGesture_Button" IsCheckable="True" Checked="WheelGesture_Button_Checked" Unchecked="WheelGesture_Button_Checked">
+                    <MenuItem.Header>
+                        <StackPanel>
+                            <TextBlock Text="{x:Static prop:Lang.NotifyIcon_wheel}" />
+                            <TextBlock Text="{x:Static prop:Lang.NotifyIcon_wheel_subText}"  FontStyle="Italic" FontSize="11" Foreground="Gray"/>
+                        </StackPanel>
+                    </MenuItem.Header>
+                    <MenuItem.ToolTip>
+                        <ToolTip Content="{x:Static prop:Lang.NotifyIcon_wheel_tooltip}" />
+                    </MenuItem.ToolTip>
+                </MenuItem>
+
+                <MenuItem x:Name="Opacity_Button" IsCheckable="True" Checked="Opacity_Button_Checked" Unchecked="Opacity_Button_Checked">
+                    <MenuItem.Header>
+                        <StackPanel>
+                            <TextBlock Text="{x:Static prop:Lang.NotifyIcon_opacity}" />
+                            <TextBlock Text="{x:Static prop:Lang.NotifyIcon_opacity_subText}" FontStyle="Italic" FontSize="11" Foreground="Gray"/>
+                        </StackPanel>
+                    </MenuItem.Header>
+                    <MenuItem.ToolTip>
+                        <ToolTip Content="{x:Static prop:Lang.NotifyIcon_opacity_tooltip}" />
+                    </MenuItem.ToolTip>
+                </MenuItem>
+
+
+                <MenuItem x:Name="DesktopScrolling_Button" IsCheckable="True" Checked="DesktopScrolling_Button_Checked" Unchecked="DesktopScrolling_Button_Checked">
+                    <MenuItem.Header>
+                        <StackPanel>
+                            <TextBlock Text="{x:Static prop:Lang.NotifyIcon_desktopScrolling}" />
+                            <TextBlock Text="{x:Static prop:Lang.NotifyIcon_desktopScrolling_subText}" FontStyle="Italic" FontSize="11" Foreground="Gray"/>
+                        </StackPanel>
+                    </MenuItem.Header>
+                    <MenuItem.ToolTip>
+                        <ToolTip Content="{x:Static prop:Lang.NotifyIcon_desktopScrolling_tooltip}" />
+                    </MenuItem.ToolTip>
+                </MenuItem>
+
                 <MenuItem x:Name="Exit_Button"  Header="{x:Static prop:Lang.NotifyIcon_exit}" Click="ExitApp" FontSize="16" MouseEnter="Exit_Button_MouseEnter" VerticalAlignment="Center" MouseLeave="Exit_Button_MouseLeave" />
 
 
-            </ContextMenu> 
+            </ContextMenu>
         </ui:NotifyIcon.Menu>
     </ui:NotifyIcon>
 </Window>
