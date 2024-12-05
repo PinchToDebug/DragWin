@@ -142,6 +142,15 @@ namespace DragWin.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Desktop Scrolling.
+        /// </summary>
+        public static string NotifyIcon_desktopScrolling {
+            get {
+                return ResourceManager.GetString("NotifyIcon.desktopScrolling", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Enable.
         /// </summary>
         public static string NotifyIcon_enable {

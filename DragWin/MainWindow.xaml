@@ -40,10 +40,11 @@
                 <MenuItem x:Name="Corner_Button" Header="{x:Static prop:Lang.NotifyIcon_overflow}" IsCheckable="True" Checked="Corner_Button_Checked"  Unchecked="Corner_Button_Checked"  />
                 <MenuItem x:Name="WheelGesture_Button" Header="{x:Static prop:Lang.NotifyIcon_wheel}" IsCheckable="True" Checked="WheelGesture_Button_Checked"  Unchecked="WheelGesture_Button_Checked"  />
                 <MenuItem x:Name="Opacity_Button" Header="{x:Static prop:Lang.NotifyIcon_opacity}" IsCheckable="True" Checked="Opacity_Button_Checked"  Unchecked="Opacity_Button_Checked"  />
+                <MenuItem x:Name="DesktopScrolling_Button" Header="{x:Static prop:Lang.NotifyIcon_desktopScrolling}" IsCheckable="True" Checked="DesktopScrolling_Button_Checked"  Unchecked="DesktopScrolling_Button_Checked" />
                 <MenuItem x:Name="Exit_Button"  Header="{x:Static prop:Lang.NotifyIcon_exit}" Click="ExitApp" FontSize="16" MouseEnter="Exit_Button_MouseEnter" VerticalAlignment="Center" MouseLeave="Exit_Button_MouseLeave" />
-            
-            
-            </ContextMenu>
+
+
+            </ContextMenu> 
         </ui:NotifyIcon.Menu>
     </ui:NotifyIcon>
 </Window>

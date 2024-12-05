@@ -20,10 +20,7 @@ using MessageBox = System.Windows.MessageBox;
 using Application = System.Windows.Application;
 using Rectangle = System.Windows.Shapes.Rectangle;
 using MouseEventArgs = System.Windows.Input.MouseEventArgs;
-using System.Reflection;
-using Microsoft.VisualBasic.Logging;
-using System.Diagnostics.PerformanceData;
-
+using WindowsDesktop;
 namespace DragWin
 {
     public partial class MainWindow
@@ -41,6 +38,7 @@ namespace DragWin
 
         // mouse
         // -----------------
+        private const int WH_KEYBOARD_LL = 13;
         private const int WH_MOUSE_LL = 14;
         private const int WM_MOUSEMOVE = 0x0200;
         private const int WM_RBUTTONDOWN = 0x0204;
@@ -70,6 +68,7 @@ namespace DragWin
         private const int MDT_EFFECTIVE_DPI = 0;
 
         private static IntPtr hookIdMouse = IntPtr.Zero;
+        private static IntPtr hookIdKeyboard = IntPtr.Zero;
         private static IntPtr hWnd;
         private static IntPtr resizeHwnd;
         private static IntPtr prevhWnd;
@@ -88,6 +87,7 @@ namespace DragWin
         private static POINT initialMiddleClickPosition;
         private static POINT previousMousePosition;
         private static Interop.LowLevelMouseProc mouseProc = MouseHookCallback;
+        private static Interop.LowLevelKeyboardProc keyboardProc = KeyboardHookCallback;
         private static PointerTouchInfo[]? touchPointers;
 
 
@@ -101,6 +101,7 @@ namespace DragWin
         private static bool AutoFancyZones = false;
         private static bool WheelGesture = false;
         private static bool OpacityScrolling = false;
+        private static bool DesktopScrolling = false;
 
 
         //logic 
@@ -123,6 +124,7 @@ namespace DragWin
         private static bool enabled = true;
         // private static bool outsideFix = false;
         private static bool didScrollWindows = false;
+        private static bool didChangeVirtualDesktopWinScroll = false;
 
         static bool legacyFixOnceOnly = false;
         static uint processId1, processId2 = 0;
@@ -163,6 +165,7 @@ namespace DragWin
                  Application.Current.Shutdown();
             }
             hookIdMouse = SetHook(WH_MOUSE_LL, mouseProc);
+            hookIdKeyboard = SetKeyboardHook(WH_KEYBOARD_LL, keyboardProc);
             try
             {
                 exePath = Process.GetCurrentProcess().MainModule!.FileName;
@@ -180,6 +183,7 @@ namespace DragWin
             if (KeyExists("canOverflow")) canOverflow = (bool)ReadKeyValue("canOverflow");
             else canOverflow = true;
             if (KeyExists("OpacityScrolling")) OpacityScrolling = (bool)ReadKeyValue("OpacityScrolling");
+            if (KeyExists("DesktopScrolling")) DesktopScrolling = (bool)ReadKeyValue("DesktopScrolling");
             if (KeyExists("WheelGesture")) WheelGesture = (bool)ReadKeyValue("WheelGesture");
             if (KeyExists("bringToFront")) bringToFront = (bool)ReadKeyValue("bringToFront");
             if (KeyExists("enabled")) enabled = (bool)ReadKeyValue("enabled");
@@ -197,6 +201,7 @@ namespace DragWin
 
 
             bringToFront = true; // Other option isn't available
+            DesktopScrolling_Button.IsChecked = DesktopScrolling;
             Resize_Button.IsChecked = canResizeCorners;
             Corner_Button.IsChecked = canOverflow;
             Opacity_Button.IsChecked = OpacityScrolling;
@@ -255,6 +260,24 @@ namespace DragWin
                 }
             }
             return ""; // IMPORTANT: It was null before
+        }
+
+     
+        public static IntPtr KeyboardHookCallback(int nCode, IntPtr wParam, IntPtr lParam)
+        {
+            if (DesktopScrolling && nCode >= 0 && wParam == (IntPtr)0x0101) // WM_KEYUP
+            {
+                int vkCode = Marshal.ReadInt32(lParam);
+                
+                // left and right Win key
+                if ((vkCode == 0x5B || vkCode == 0x5C) && didChangeVirtualDesktopWinScroll)
+                {
+                    Debug.WriteLine("VDesktop change escape");
+                    new InputSimulator().Keyboard.KeyUp(VirtualKeyCode.ESCAPE);
+                    didChangeVirtualDesktopWinScroll = false;
+                }
+            }
+            return CallNextHookEx(hookIdKeyboard, nCode, wParam, lParam);
         }
 
 
@@ -650,13 +673,25 @@ namespace DragWin
 
                 if ((hookStruct.pt.X <= 0 || hookStruct.pt.X >= Screen.FromPoint(new System.Drawing.Point(hookStruct.pt.X, hookStruct.pt.Y)).Bounds.Width - 1) && hookStruct.pt.Y <= 0)
                 {
+                    int currentDesktopIndex = -1; 
+                    var th = new Thread(() =>
+                    {
+                        var desktops = VirtualDesktop.GetDesktops();
+                        var currentDesktop = VirtualDesktop.Current;
+                        currentDesktopIndex = Array.IndexOf(desktops, currentDesktop);
+                    });
+
+                    th.SetApartmentState(ApartmentState.STA);
+                    th.Start();
+                    th.Join();
+                   
                     if ((short)(hookStruct.mouseData >> 16) < 0)
                     {
-                        SimulateKeyPress(VirtualKeyCode.LWIN, VirtualKeyCode.CONTROL, VirtualKeyCode.LEFT);
+                        SwitchToDesktopAsync(currentDesktopIndex - 1);
                     }
                     else
                     {
-                        SimulateKeyPress(VirtualKeyCode.LWIN, VirtualKeyCode.CONTROL, VirtualKeyCode.RIGHT);
+                        SwitchToDesktopAsync(currentDesktopIndex + 1);
                     }
                 }
                 if (OpacityScrolling && (GetAsyncKeyState(0x12) & 0x8000) != 0) // if Alt is down
@@ -702,7 +737,38 @@ namespace DragWin
                     SetLayeredWindowAttributes(_hwnd, 0, alpha, (uint)LWA_ALPHA);
                     return -1;
                 }
+                if (DesktopScrolling && ((GetAsyncKeyState(0x5B) & 0x8000) != 0 || (GetAsyncKeyState(0x5C) & 0x8000) != 0)) 
+                {
+                   
+                    didChangeVirtualDesktopWinScroll = true;
+                    new InputSimulator().Keyboard.KeyDown(VirtualKeyCode.ESCAPE);
+                    int currentDesktopIndex = -1; 
+                    var th = new Thread(() =>
+                    {
+                        var desktops = VirtualDesktop.GetDesktops();
+                        var currentDesktop = VirtualDesktop.Current;
+                        currentDesktopIndex = Array.IndexOf(desktops, currentDesktop);
+                    });
+
+                    th.SetApartmentState(ApartmentState.STA);
+                    th.Start();
+                    th.Join();
+                   
+                    if ((short)(hookStruct.mouseData >> 16) < 0)
+                    {
+                        SwitchToDesktopAsync(currentDesktopIndex - 1);
+                        Debug.WriteLine("VDesktop changed -1");
+                    }
+                    else
+                    {
+                        SwitchToDesktopAsync(currentDesktopIndex + 1);
+                        Debug.WriteLine("VDesktop changed +1");
+                    }
+                    return -1; // to prevent scrolling if it doesn't changes desktop
+                   
+                }
             }
+
 
             if (wParam == (IntPtr)WM_MOUSEWHEEL && middleMouseDownHasCount && windowOrder.Count > 0 && canScrollWindows)
             {
@@ -1399,6 +1465,20 @@ namespace DragWin
             }
             return WindowFromPoint(hs.pt);
         }
+        public static async Task SwitchToDesktopAsync(int desktopIndex)
+        {
+            var th = new Thread(() =>
+            {
+                var desktops = VirtualDesktop.GetDesktops();
+                if (desktopIndex >= 0 && desktopIndex < desktops.Length)
+                {
+                    desktops[desktopIndex].Switch();
+                }
+            });
+            th.SetApartmentState(ApartmentState.STA);
+            th.Start();
+            th.Join();
+        }
         #endregion
 
 
@@ -1473,6 +1553,10 @@ namespace DragWin
         private void Opacity_Button_Checked(object sender, RoutedEventArgs e)
         {
             WriteKey(Opacity_Button, nameof(OpacityScrolling), ref OpacityScrolling);
+        }
+        private void DesktopScrolling_Button_Checked(object sender, RoutedEventArgs e)
+        {
+            WriteKey(DesktopScrolling_Button, nameof(DesktopScrolling), ref DesktopScrolling);
         }
         private void AutoFancyZones_Button_Checked(object sender, RoutedEventArgs e)
         {

@@ -189,4 +189,7 @@
   <data name="NotifyIcon.settop" xml:space="preserve">
     <value>Set window top</value>
   </data>
+  <data name="NotifyIcon.desktopScrolling" xml:space="preserve">
+    <value>Desktop Scrolling</value>
+  </data>
 </root>
