@@ -219,4 +219,7 @@
   <data name="NotifyIcon_wheel.tooltip" xml:space="preserve">
     <value>スクロールホイールで仮想デスクトップを切り替えます。</value>
   </data>
+  <data name="Message.error.input" xml:space="preserve">
+    <value>セキュリティ設定やアンチチート、またはその他のソフトウェアによる制限のため、一部の機能を完了できませんでした。</value>
+  </data>
 </root>

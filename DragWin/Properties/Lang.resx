@@ -219,4 +219,7 @@
   <data name="NotifyIcon_wheel.tooltip" xml:space="preserve">
     <value>Switch virtual desktops with the scroll wheel.</value>
   </data>
+  <data name="Message.error.input" xml:space="preserve">
+    <value>Some features of the app couldn't be completed due to security settings or restrictions from anti-cheat or other software.</value>
+  </data>
 </root>

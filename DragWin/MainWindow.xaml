@@ -8,7 +8,7 @@
         xmlns:prop="clr-namespace:DragWin.Properties"
         
         mc:Ignorable="d"
-        Title="DragWin" Height="450" Width="800" Initialized="Window_Initialized">
+        Title="DragWin" Height="450" Width="800" Loaded="Window_Loaded" Initialized="Window_Initialized">
     <ui:NotifyIcon
     Grid.Row="0"
     FocusOnLeftClick="True"

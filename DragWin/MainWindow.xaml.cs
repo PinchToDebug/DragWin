@@ -21,6 +21,7 @@ using Application = System.Windows.Application;
 using Rectangle = System.Windows.Shapes.Rectangle;
 using MouseEventArgs = System.Windows.Input.MouseEventArgs;
 using WindowsDesktop;
+using Microsoft.Toolkit.Uwp.Notifications;
 namespace DragWin
 {
     public partial class MainWindow
@@ -35,6 +36,12 @@ namespace DragWin
         // -----------------
         private const string mutexId = "{47bb6j6d-l38e-4bb5-92jb-a239cr17bj9e}";
         private Mutex mutex; // it is used 
+
+        // Consts for helping to hide the window
+        // -----------------
+        private const int GWL_EX_STYLE = -20;
+        private const int WS_EX_APPWINDOW = 0x00040000;
+        private const int WS_EX_TOOLWINDOW = 0x00000080;
 
         // mouse
         // -----------------
@@ -126,6 +133,8 @@ namespace DragWin
         private static bool didScrollWindows = false;
         private static bool didChangeVirtualDesktopWinScroll = false;
 
+        private static bool isToastNotificationShown = false;
+
         static bool legacyFixOnceOnly = false;
         static uint processId1, processId2 = 0;
         static bool reSizing;
@@ -172,7 +181,7 @@ namespace DragWin
             }
             catch
             {
-                MessageBox.Show(Properties.Lang.Message_error_executable);
+                ShowErrorNotif(Properties.Lang.Message_error_executable);
             }
 
 
@@ -213,25 +222,16 @@ namespace DragWin
             Update();
 
         }
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            SetWindowLong(new WindowInteropHelper(this).Handle, GWL_EX_STYLE, (GetWindowLong(new WindowInteropHelper(this).Handle, GWL_EX_STYLE) | WS_EX_TOOLWINDOW) & ~WS_EX_APPWINDOW);
+        }
+
         private async void Update()
         {
             await Updater.CheckUpdateAsync(url);
             // mutex.ReleaseMutex();
             // Application.Current.Shutdown();
-        }
-
-        private static void SimulateKeyPress(params VirtualKeyCode[] keys)
-        {
-            InputSimulator simulator = new InputSimulator();
-
-            foreach (var key in keys)
-            {
-                simulator.Keyboard.KeyDown(key);
-            }
-            foreach (var key in keys)
-            {
-                simulator.Keyboard.KeyUp(key);
-            }
         }
 
 
@@ -262,18 +262,40 @@ namespace DragWin
             return ""; // IMPORTANT: It was null before
         }
 
-     
+        public static async Task ShowErrorNotifInput()
+        {
+            if (isToastNotificationShown) return;
+            isToastNotificationShown = true;
+            await Task.Run(() =>  new ToastContentBuilder().AddText(Properties.Lang.Message_error_input).Show());
+            await Task.Delay(7000);
+            isToastNotificationShown = false;
+        }
+        public static async Task ShowErrorNotif(string msg)
+        {
+            await Task.Run(() => new ToastContentBuilder().AddText(msg).Show());
+        }
+        public static void SafeInput(Action action)
+        {
+            try
+            {
+                action?.Invoke();
+            }
+            catch 
+            {
+                ShowErrorNotifInput();
+            }
+        }
+
         public static IntPtr KeyboardHookCallback(int nCode, IntPtr wParam, IntPtr lParam)
         {
             if (DesktopScrolling && nCode >= 0 && wParam == (IntPtr)0x0101) // WM_KEYUP
             {
                 int vkCode = Marshal.ReadInt32(lParam);
-                
+
                 // left and right Win key
                 if ((vkCode == 0x5B || vkCode == 0x5C) && didChangeVirtualDesktopWinScroll)
                 {
-                    Debug.WriteLine("VDesktop change escape");
-                    new InputSimulator().Keyboard.KeyUp(VirtualKeyCode.ESCAPE);
+                    SafeInput(() => new InputSimulator().Keyboard.KeyUp(VirtualKeyCode.ESCAPE));
                     didChangeVirtualDesktopWinScroll = false;
                 }
             }
@@ -296,7 +318,7 @@ namespace DragWin
             }
             catch
             {
-                MessageBox.Show(Properties.Lang.Message_error_hookstruct);
+                ShowErrorNotif(Properties.Lang.Message_error_hookstruct);
             }
             GetWindowRect(GetAncestor(innerHwnd(lParam), 2), out rect);
             leftWindow = mouseOutsideHwndWindow(rect);
@@ -329,12 +351,12 @@ namespace DragWin
                         Task.Run(() =>
                         {
                             Thread.Sleep(10);
-                            new InputSimulator().Keyboard.KeyDown(VirtualKeyCode.MENU);
-                            new InputSimulator().Keyboard.KeyUp(VirtualKeyCode.MENU);
+                            SafeInput(() => new InputSimulator().Keyboard.KeyDown(VirtualKeyCode.MENU));
+                            SafeInput(() => new InputSimulator().Keyboard.KeyUp(VirtualKeyCode.MENU));
                             MouseEvent(MouseEventFlags.RightUp);
                             Thread.Sleep(10); // otherwise context menu can pop up
-                            new InputSimulator().Keyboard.KeyDown(VirtualKeyCode.MENU);
-                            new InputSimulator().Keyboard.KeyUp(VirtualKeyCode.MENU);
+                            SafeInput(() => new InputSimulator().Keyboard.KeyDown(VirtualKeyCode.MENU));
+                            SafeInput(() => new InputSimulator().Keyboard.KeyUp(VirtualKeyCode.MENU));
 
                         });
 
@@ -379,12 +401,12 @@ namespace DragWin
                         Debug.WriteLine("Windows Explorer ClickFix");
                         //  MouseEvent(MouseEventFlags.LeftDown);
                         //  MouseEvent(MouseEventFlags.LeftUp);
-                        new InputSimulator().Keyboard.KeyDown(VirtualKeyCode.MENU);
+                        SafeInput(() => new InputSimulator().Keyboard.KeyDown(VirtualKeyCode.MENU));
                         Thread.Sleep(10);
                         MouseEvent(MouseEventFlags.RightUp);
-                        new InputSimulator().Keyboard.KeyUp(VirtualKeyCode.MENU);
-                        new InputSimulator().Keyboard.KeyDown(VirtualKeyCode.MENU);
-                        new InputSimulator().Keyboard.KeyUp(VirtualKeyCode.MENU);
+                        SafeInput(() => new InputSimulator().Keyboard.KeyUp(VirtualKeyCode.MENU));
+                        SafeInput(() => new InputSimulator().Keyboard.KeyDown(VirtualKeyCode.MENU));
+                        SafeInput(() => new InputSimulator().Keyboard.KeyUp(VirtualKeyCode.MENU));
                     });
                     //hWnd = GetAncestor(innerHwnd(lParam), 2); // idk its not needed here at all
                     return 0;
@@ -445,12 +467,12 @@ namespace DragWin
                     Task.Run(() =>
                     {
                         Thread.Sleep(10);
-                        new InputSimulator().Keyboard.KeyDown(VirtualKeyCode.MENU);
-                        new InputSimulator().Keyboard.KeyUp(VirtualKeyCode.MENU);
+                        SafeInput(() => new InputSimulator().Keyboard.KeyDown(VirtualKeyCode.MENU));
+                        SafeInput(() => new InputSimulator().Keyboard.KeyUp(VirtualKeyCode.MENU));
                         MouseEvent(MouseEventFlags.RightUp);
                         Thread.Sleep(10); // Otherwise context menu can pop up
-                        new InputSimulator().Keyboard.KeyDown(VirtualKeyCode.MENU);
-                        new InputSimulator().Keyboard.KeyUp(VirtualKeyCode.MENU);
+                        SafeInput(() => new InputSimulator().Keyboard.KeyDown(VirtualKeyCode.MENU));
+                        SafeInput(() => new InputSimulator().Keyboard.KeyUp(VirtualKeyCode.MENU));
                     });
                     return 0;
                 }
@@ -741,7 +763,12 @@ namespace DragWin
                 {
                    
                     didChangeVirtualDesktopWinScroll = true;
-                    new InputSimulator().Keyboard.KeyDown(VirtualKeyCode.ESCAPE);
+                    try
+                    {
+                        SafeInput(() => new InputSimulator().Keyboard.KeyDown(VirtualKeyCode.ESCAPE));
+                    }
+                    catch { }
+                    
                     int currentDesktopIndex = -1; 
                     var th = new Thread(() =>
                     {
@@ -927,8 +954,8 @@ namespace DragWin
                         {
                             Debug.WriteLine("alt after left click after resizing");
                             Thread.Sleep(5);
-                            new InputSimulator().Keyboard.KeyDown(VirtualKeyCode.MENU);
-                            new InputSimulator().Keyboard.KeyUp(VirtualKeyCode.MENU);
+                            SafeInput(() => new InputSimulator().Keyboard.KeyDown(VirtualKeyCode.MENU));
+                            SafeInput(() => new InputSimulator().Keyboard.KeyUp(VirtualKeyCode.MENU));
                         }
                     });
 
@@ -977,9 +1004,16 @@ namespace DragWin
 
                             MouseEvent(MouseEventFlags.RightUp);
                             Thread.Sleep(5);
-
-                            new InputSimulator().Keyboard.KeyDown(VirtualKeyCode.ESCAPE);
-                            new InputSimulator().Keyboard.KeyUp(VirtualKeyCode.ESCAPE);
+                            try
+                            {
+                                SafeInput(() => new InputSimulator().Keyboard.KeyDown(VirtualKeyCode.ESCAPE));
+                                SafeInput(() => new InputSimulator().Keyboard.KeyUp(VirtualKeyCode.ESCAPE));
+                            }
+                            catch (Exception e)
+                            {
+                                //ShowErrorNotif(e.Message);
+                            }
+                         
 
                         });
                     }
@@ -991,8 +1025,8 @@ namespace DragWin
 
                             MouseEvent(MouseEventFlags.RightUp);
                             Thread.Sleep(5);
-                            new InputSimulator().Keyboard.KeyDown(VirtualKeyCode.ESCAPE);
-                            new InputSimulator().Keyboard.KeyUp(VirtualKeyCode.ESCAPE); // NOTE: temp, but seems good
+                            SafeInput(() => new InputSimulator().Keyboard.KeyDown(VirtualKeyCode.ESCAPE));
+                            SafeInput(() => new InputSimulator().Keyboard.KeyUp(VirtualKeyCode.ESCAPE)); // NOTE: temp, but seems good
                         });
                     }
                     //  clickFix = false;
@@ -1038,10 +1072,10 @@ namespace DragWin
                         Debug.WriteLine("set full left");
                         Task.Run(() =>
                         {
-                            new InputSimulator().Keyboard.KeyDown(VirtualKeyCode.LWIN);
-                            new InputSimulator().Keyboard.KeyUp(VirtualKeyCode.LEFT);
-                            new InputSimulator().Keyboard.KeyDown(VirtualKeyCode.LEFT);
-                            new InputSimulator().Keyboard.KeyUp(VirtualKeyCode.LWIN);
+                            SafeInput(() => new InputSimulator().Keyboard.KeyDown(VirtualKeyCode.LWIN));
+                            SafeInput(() => new InputSimulator().Keyboard.KeyUp(VirtualKeyCode.LEFT));
+                            SafeInput(() => new InputSimulator().Keyboard.KeyDown(VirtualKeyCode.LEFT));
+                            SafeInput(() => new InputSimulator().Keyboard.KeyUp(VirtualKeyCode.LWIN));
                             Thread.Sleep(10);
                             GetWindowRect(hWnd, out rect);
                         });
@@ -1051,10 +1085,10 @@ namespace DragWin
                         Debug.WriteLine("set full right");
                         Task.Run(() =>
                         {
-                            new InputSimulator().Keyboard.KeyDown(VirtualKeyCode.LWIN);
-                            new InputSimulator().Keyboard.KeyUp(VirtualKeyCode.RIGHT);
-                            new InputSimulator().Keyboard.KeyDown(VirtualKeyCode.RIGHT);
-                            new InputSimulator().Keyboard.KeyUp(VirtualKeyCode.LWIN);
+                            SafeInput(() => new InputSimulator().Keyboard.KeyDown(VirtualKeyCode.LWIN));
+                            SafeInput(() => new InputSimulator().Keyboard.KeyUp(VirtualKeyCode.RIGHT));
+                            SafeInput(() => new InputSimulator().Keyboard.KeyDown(VirtualKeyCode.RIGHT));
+                            SafeInput(() => new InputSimulator().Keyboard.KeyUp(VirtualKeyCode.LWIN));
                             Thread.Sleep(10);
                             GetWindowRect(hWnd, out rect);
                         });
@@ -1078,7 +1112,7 @@ namespace DragWin
                             Task.Delay(10);
                             if (AutoFancyZones)
                             {
-                                new InputSimulator().Keyboard.KeyUp(VirtualKeyCode.LSHIFT);
+                                SafeInput(() => new InputSimulator().Keyboard.KeyUp(VirtualKeyCode.LSHIFT));
                                 Debug.WriteLine("SHIFT UP\n\n");
                             }
                             else
@@ -1144,8 +1178,8 @@ namespace DragWin
                             IntPtr result;
                             MouseEvent(MouseEventFlags.RightUp);
                             Thread.Sleep(5);
-                            new InputSimulator().Keyboard.KeyDown(VirtualKeyCode.MENU);
-                            new InputSimulator().Keyboard.KeyUp(VirtualKeyCode.MENU);
+                            SafeInput(() => new InputSimulator().Keyboard.KeyDown(VirtualKeyCode.MENU));
+                            SafeInput(() => new InputSimulator().Keyboard.KeyUp(VirtualKeyCode.MENU));
                             SendMessageTimeout(resizeHwnd, 0x00A1, (IntPtr)hitTestCode, IntPtr.Zero, 0, 5, out result);
                             SendMessageTimeout(resizeHwnd, 0x00A1, (IntPtr)hitTestCode, IntPtr.Zero, 0, 5, out result);
                             // MouseEvent(MouseEventFlags.RightUp);
@@ -1154,8 +1188,8 @@ namespace DragWin
                             {
                                 Debug.WriteLine("escape");
                                 Thread.Sleep(5);
-                                new InputSimulator().Keyboard.KeyDown(VirtualKeyCode.MENU);
-                                new InputSimulator().Keyboard.KeyUp(VirtualKeyCode.MENU);
+                                SafeInput(() => new InputSimulator().Keyboard.KeyDown(VirtualKeyCode.MENU));
+                                SafeInput(() => new InputSimulator().Keyboard.KeyUp(VirtualKeyCode.MENU));
                             }
                             Debug.WriteLine(innerHwnd(lParam));
                         });
@@ -1251,15 +1285,15 @@ namespace DragWin
                         Task.Run(() =>
                         {
                             Thread.Sleep(5);
-                            new InputSimulator().Keyboard.KeyDown(VirtualKeyCode.MENU);
+                            SafeInput(() => new InputSimulator().Keyboard.KeyDown(VirtualKeyCode.MENU));
 
                             Thread.Sleep(5);
                             MouseEvent(MouseEventFlags.LeftDown);
                             MouseEvent(MouseEventFlags.LeftUp);
                             Thread.Sleep(5);
-                            new InputSimulator().Keyboard.KeyUp(VirtualKeyCode.MENU);
-                            new InputSimulator().Keyboard.KeyDown(VirtualKeyCode.MENU);
-                            new InputSimulator().Keyboard.KeyUp(VirtualKeyCode.MENU);
+                            SafeInput(() => new InputSimulator().Keyboard.KeyUp(VirtualKeyCode.MENU));
+                            SafeInput(() => new InputSimulator().Keyboard.KeyDown(VirtualKeyCode.MENU));
+                            SafeInput(() => new InputSimulator().Keyboard.KeyUp(VirtualKeyCode.MENU));
                         });
                     }
                     movingExplorerFix = false;
@@ -1276,7 +1310,7 @@ namespace DragWin
                             Debug.WriteLine("SHIFT DOWN ONCE");
                             Task.Run(() =>
                             {
-                                new InputSimulator().Keyboard.KeyDown(VirtualKeyCode.LSHIFT);
+                                SafeInput(() => new InputSimulator().Keyboard.KeyDown(VirtualKeyCode.LSHIFT));
                             });
                         }
                        
@@ -1432,7 +1466,7 @@ namespace DragWin
             }
             catch (Exception)
             {
-                MessageBox.Show(Properties.Lang.Message_error_window_title);
+                ShowErrorNotif(Properties.Lang.Message_error_window_title);
             }
             return GetWindowTitle(WindowFromPoint(hs.pt));
         }
@@ -1461,7 +1495,7 @@ namespace DragWin
             }
             catch (Exception)
             {
-                MessageBox.Show(Properties.Lang.Message_error_window_handle);
+                ShowErrorNotif(Properties.Lang.Message_error_window_handle);
             }
             return WindowFromPoint(hs.pt);
         }
@@ -1700,6 +1734,7 @@ namespace DragWin
                 AutoFancyZones_Button.IsChecked = AutoFancyZones;
             }
         }
+
 
         private void Update_Button_Click(object sender, RoutedEventArgs e)
         {

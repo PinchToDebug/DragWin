@@ -97,6 +97,15 @@ namespace DragWin.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Some features of the app couldn&apos;t be completed due to security settings or restrictions from anti-cheat or other software..
+        /// </summary>
+        public static string Message_error_input {
+            get {
+                return ResourceManager.GetString("Message.error.input", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Error reading key.
         /// </summary>
         public static string Message_error_read_key {
