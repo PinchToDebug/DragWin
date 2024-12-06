@@ -1,7 +1,8 @@
 # Dragwin
 It's an application that lets you move windows **without holding down Alt or Control**, with some extra features.
 
-<a href="#"><img src="https://img.shields.io/github/downloads/PinchToDebug/DragWin/total" alt="Downloads"></a>
+<a href="https://github.com/PinchToDebug/DragWin/releases/tag/v0.9.57"><img src="https://img.shields.io/github/downloads/PinchToDebug/DragWin/total" alt="Downloads"></a>
+<a href="https://github.com/PinchToDebug/DragWin/releases/tag/v0.9.57"><img src="https://img.shields.io/github/downloads/PinchToDebug/DragWin/latest/total" alt="Downloads"></a>
 <a href="https://github.com/PinchToDebug/DragWin/releases/latest"><img src="https://img.shields.io/github/v/release/PinchToDebug/DragWin" alt="Version"></a>
 <a href="https://github.com/PinchToDebug/DragWin/issues"><img src="https://img.shields.io/github/issues/PinchToDebug/DragWin" alt="Issues"></a>
 
@@ -13,7 +14,8 @@ It's an application that lets you move windows **without holding down Alt or Con
 - Scrolling between virtual desktops from the top corners
 - Option to auto-invoke FancyZones
 - Multi-display support
-- Scrolling with middle-mouse button between displays
+- Scroll wheel drag to switch between virtual desktops
+- Win + Scrolling to switch between virtual desktops
 - Option to change a window's opacity while holding down Alt.
 - Multi-language support
 - Doesn't affect fullscreen applications
@@ -34,4 +36,4 @@ This started as a proof of concept, so navigating the source code might be chall
 
 ## 📜 License
 
-The project is built with [WPF UI](https://github.com/lepoco/wpfui), [Input Simulator](https://github.com/michaelnoonan/inputsimulator) and [Windows Community Toolkit](https://github.com/CommunityToolkit/WindowsCommunityToolkit/tree/main), all licensed under the [MIT License](https://github.com/lepoco/wpfui/blob/main/LICENSE).
+The project is built with [WPF UI](https://github.com/lepoco/wpfui), [Input Simulator](https://github.com/michaelnoonan/inputsimulator), [Windows Community Toolkit](https://github.com/CommunityToolkit/WindowsCommunityToolkit/tree/main) and [VirtualDesktop](https://www.nuget.org/packages/Slions.VirtualDesktop/), all licensed under the [MIT License](https://github.com/lepoco/wpfui/blob/main/LICENSE).
