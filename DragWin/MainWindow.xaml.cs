@@ -89,6 +89,7 @@ namespace DragWin
         private static Screen? screen;
         private static MSLLHOOKSTRUCT hookStruct;
 
+        private static RECT rectBefore;
         private static RECT rect;
         private static POINT initialMouseClickPosition;
         private static POINT initialMiddleClickPosition;
@@ -1158,7 +1159,7 @@ namespace DragWin
                     return 0;  // Won't move if hwnd is in the list
                 }
 
-
+                GetWindowRect(hWnd, out rectBefore);
                 ShowWindow(hWnd, 9); // Set to normal from maximized
                 GetWindowRect(hWnd, out rect);
 
@@ -1249,10 +1250,30 @@ namespace DragWin
                         Debug.WriteLine("normalize: 3");
                         MoveWindow(hWnd, hookStruct.pt.X - width / 2, 0, width, height, true);
                     }
-                    if (rect.top <= 1 && rect.left <= 0)
+                    if ( rect.left <= 0 && rectBefore.top <= 1)
                     {
                         Debug.WriteLine("normalize: 4");
-                        MoveWindow(hWnd, 0, 0, width, height, true);
+                        if (rect.top <=0)
+                        {
+                            MoveWindow(hWnd, 0, 0, width, height, true);
+                        }
+                        else
+                        {
+                            MoveWindow(hWnd, 0, rect.top, width, height, true);
+                        }
+                    }
+                    screen = Screen.FromPoint(currentMousePosition);
+                    if (rect.right >= screen.WorkingArea.Width  && rectBefore.top <= 1)
+                    {
+                        Debug.WriteLine("normalize: 5");
+                        if (rect.top <= 0)
+                        {
+                            MoveWindow(hWnd, screen.WorkingArea.Width - rect.width, 0, width, height, true);
+                        }
+                        else
+                        {
+                            MoveWindow(hWnd, screen.WorkingArea.Width - rect.width, rect.top, width, height, true);
+                        }
                     }
                     else
                     {
