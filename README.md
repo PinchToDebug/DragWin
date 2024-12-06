@@ -2,6 +2,7 @@
 It's an application that lets you move windows **without holding down Alt or Control**, with some extra features.
 
 <a href="https://github.com/PinchToDebug/DragWin/releases/tag/v0.9.57"><img src="https://img.shields.io/github/downloads/PinchToDebug/DragWin/total" alt="Downloads"></a>
+<a href="https://github.com/PinchToDebug/DragWin/releases/tag/v0.9.57"><img src="https://img.shields.io/github/downloads/PinchToDebug/DragWin/latest/total" alt="Downloads"></a>
 <a href="https://github.com/PinchToDebug/DragWin/releases/latest"><img src="https://img.shields.io/github/v/release/PinchToDebug/DragWin" alt="Version"></a>
 <a href="https://github.com/PinchToDebug/DragWin/issues"><img src="https://img.shields.io/github/issues/PinchToDebug/DragWin" alt="Issues"></a>
 
