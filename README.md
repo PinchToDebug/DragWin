@@ -36,4 +36,4 @@ This started as a proof of concept, so navigating the source code might be chall
 
 ## 📜 License
 
-The project is built with [WPF UI](https://github.com/lepoco/wpfui), [Input Simulator](https://github.com/michaelnoonan/inputsimulator), [Windows Community Toolkit](https://github.com/CommunityToolkit/WindowsCommunityToolkit/tree/main) and [VirtualDesktop](https://www.nuget.org/packages/Slions.VirtualDesktop/), all licensed under the [MIT License](https://github.com/lepoco/wpfui/blob/main/LICENSE).
+The project is built with [WPF UI](https://github.com/lepoco/wpfui), [Input Simulator](https://github.com/michaelnoonan/inputsimulator), [Windows Community Toolkit](https://github.com/CommunityToolkit/WindowsCommunityToolkit/tree/main) and [VirtualDesktopAPI](https://github.com/dankrusi), all licensed under the [MIT License](https://github.com/lepoco/wpfui/blob/main/LICENSE).
