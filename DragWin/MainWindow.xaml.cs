@@ -20,7 +20,7 @@ using MessageBox = System.Windows.MessageBox;
 using Application = System.Windows.Application;
 using Rectangle = System.Windows.Shapes.Rectangle;
 using MouseEventArgs = System.Windows.Input.MouseEventArgs;
-using WindowsDesktop;
+using WindowsVirtualDesktopHelper.VirtualDesktopAPI;
 using Microsoft.Toolkit.Uwp.Notifications;
 namespace DragWin
 {
@@ -42,6 +42,11 @@ namespace DragWin
         private const int GWL_EX_STYLE = -20;
         private const int WS_EX_APPWINDOW = 0x00040000;
         private const int WS_EX_TOOLWINDOW = 0x00000080;
+
+        // Virtual desktop
+        // -----------------
+        public static string DetectedVDImplementation;
+        public static IVirtualDesktopManager VDAPI;
 
         // mouse
         // -----------------
@@ -187,6 +192,7 @@ namespace DragWin
 
 
             InitializeComponent();
+            LoadVDAPI();
             versionHeader.Header += Process.GetCurrentProcess().MainModule.FileVersionInfo.FileVersion.ToString();
             TouchInjector.InitializeTouchInjection(feedbackMode: TouchFeedback.NONE);
 
@@ -226,6 +232,11 @@ namespace DragWin
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             SetWindowLong(new WindowInteropHelper(this).Handle, GWL_EX_STYLE, (GetWindowLong(new WindowInteropHelper(this).Handle, GWL_EX_STYLE) | WS_EX_TOOLWINDOW) & ~WS_EX_APPWINDOW);
+        }
+        public void LoadVDAPI()
+        {
+            DetectedVDImplementation = Loader.GetImplementationForOS();
+            VDAPI = Loader.LoadImplementationWithFallback(DetectedVDImplementation);
         }
 
         private async void Update()
@@ -696,25 +707,13 @@ namespace DragWin
 
                 if ((hookStruct.pt.X <= 0 || hookStruct.pt.X >= Screen.FromPoint(new System.Drawing.Point(hookStruct.pt.X, hookStruct.pt.Y)).Bounds.Width - 1) && hookStruct.pt.Y <= 0)
                 {
-                    int currentDesktopIndex = -1; 
-                    var th = new Thread(() =>
-                    {
-                        var desktops = VirtualDesktop.GetDesktops();
-                        var currentDesktop = VirtualDesktop.Current;
-                        currentDesktopIndex = Array.IndexOf(desktops, currentDesktop);
-                    });
-
-                    th.SetApartmentState(ApartmentState.STA);
-                    th.Start();
-                    th.Join();
-                   
                     if ((short)(hookStruct.mouseData >> 16) < 0)
                     {
-                        SwitchToDesktopAsync(currentDesktopIndex - 1);
+                        Task.Run(() => { VDAPI.SwitchBackward(); });      
                     }
                     else
                     {
-                        SwitchToDesktopAsync(currentDesktopIndex + 1);
+                        Task.Run(() => { VDAPI.SwitchForward(); });
                     }
                 }
                 if (OpacityScrolling && (GetAsyncKeyState(0x12) & 0x8000) != 0) // if Alt is down
@@ -769,27 +768,16 @@ namespace DragWin
                         SafeInput(() => new InputSimulator().Keyboard.KeyDown(VirtualKeyCode.ESCAPE));
                     }
                     catch { }
-                    
-                    int currentDesktopIndex = -1; 
-                    var th = new Thread(() =>
-                    {
-                        var desktops = VirtualDesktop.GetDesktops();
-                        var currentDesktop = VirtualDesktop.Current;
-                        currentDesktopIndex = Array.IndexOf(desktops, currentDesktop);
-                    });
-
-                    th.SetApartmentState(ApartmentState.STA);
-                    th.Start();
-                    th.Join();
-                   
+                                    
                     if ((short)(hookStruct.mouseData >> 16) < 0)
                     {
-                        SwitchToDesktopAsync(currentDesktopIndex - 1);
+                        Task.Run(() => { VDAPI.SwitchBackward(); });
+                    
                         Debug.WriteLine("VDesktop changed -1");
                     }
                     else
                     {
-                        SwitchToDesktopAsync(currentDesktopIndex + 1);
+                        Task.Run(() => { VDAPI.SwitchForward(); });
                         Debug.WriteLine("VDesktop changed +1");
                     }
                     return -1; // to prevent scrolling if it doesn't changes desktop
@@ -1519,20 +1507,6 @@ namespace DragWin
                 ShowErrorNotif(Properties.Lang.Message_error_window_handle);
             }
             return WindowFromPoint(hs.pt);
-        }
-        public static async Task SwitchToDesktopAsync(int desktopIndex)
-        {
-            var th = new Thread(() =>
-            {
-                var desktops = VirtualDesktop.GetDesktops();
-                if (desktopIndex >= 0 && desktopIndex < desktops.Length)
-                {
-                    desktops[desktopIndex].Switch();
-                }
-            });
-            th.SetApartmentState(ApartmentState.STA);
-            th.Start();
-            th.Join();
         }
         #endregion
 

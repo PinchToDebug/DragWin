@@ -15,8 +15,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Dependencies\**" />
+    <EmbeddedResource Remove="Dependencies\**" />
+    <None Remove="Dependencies\**" />
+    <Page Remove="Dependencies\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Remove="Icon\default.ico" />
-    <None Remove="Dependencies\VirtualDesktop.dll" />
   </ItemGroup>
 
   <ItemGroup>
@@ -30,14 +36,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Reference Include="VirtualDesktop">
-      <HintPath>Dependencies\VirtualDesktop.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-
-  <ItemGroup>
     <Resource Include="Icon\default.ico" />
-    <Resource Include="Dependencies\VirtualDesktop.dll" />
   </ItemGroup>
 
   <ItemGroup>
