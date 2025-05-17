@@ -7,10 +7,10 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
     <ApplicationIcon>default.ico</ApplicationIcon>
-    <FileVersion>0.9.65</FileVersion>
+    <FileVersion>0.9.7</FileVersion>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <UseWindowsForms>True</UseWindowsForms>
-    <AssemblyVersion></AssemblyVersion>
+    <AssemblyVersion>0.9.7</AssemblyVersion>
     <SupportedOSPlatformVersion>10.0.19041.0</SupportedOSPlatformVersion>
   </PropertyGroup>
 
