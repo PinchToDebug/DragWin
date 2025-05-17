@@ -27,6 +27,8 @@ namespace DragWin
     public partial class MainWindow
     {
         [DllImport("user32.dll")]
+        static extern void NotifyWinEvent(uint eventType, IntPtr hwnd, int idObject, int idChild);
+        [DllImport("user32.dll")]
         public static extern IntPtr GetWindow(IntPtr hWnd, uint uCmd);
         // update url
         // -----------------
@@ -1030,6 +1032,7 @@ namespace DragWin
                 if (movingWindow)
                 {
                     movingWindow = false;
+                    NotifyWinEvent(0x000B, hWnd, 0, 0);
 
 
 
@@ -1134,7 +1137,6 @@ namespace DragWin
                     Math.Abs(initialMouseClickPosition.Y - hookStruct.pt.Y) > 3 |
                     Math.Abs(initialMouseClickPosition.X - hookStruct.pt.X) > 3))
             {
-
                 if (hwndCheck)
                 {
                     hWnd = GetAncestor(innerHwnd(lParam), 2);
@@ -1150,7 +1152,10 @@ namespace DragWin
                 GetWindowRect(hWnd, out rectBefore);
                 ShowWindow(hWnd, 9); // Set to normal from maximized
                 GetWindowRect(hWnd, out rect);
-
+                if (doOnce2)
+                {
+                    NotifyWinEvent(0x000A, hWnd, 0, 0);
+                }
                 if (doOnce2 && canResizeCorners)
                 {
                     doOnce2 = false;
