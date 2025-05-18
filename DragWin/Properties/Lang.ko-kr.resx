@@ -172,7 +172,7 @@
     <value>모서리 크기 조정</value>
   </data>
   <data name="NotifyIcon.scroll" xml:space="preserve">
-    <value>스크롤 창</value>
+    <value>창 스크롤</value>
   </data>
   <data name="NotifyIcon.fancyzones" xml:space="preserve">
     <value>자동 팬시존</value>
@@ -202,7 +202,7 @@
     <value>창 드래그를 화면 경계로 제한합니다.</value>
   </data>
   <data name="NotifyIcon_opacity.subText" xml:space="preserve">
-    <value>Alt + Scroll 휠</value>
+    <value>Alt + 스크롤 휠</value>
   </data>
   <data name="NotifyIcon_opacity.tooltip" xml:space="preserve">
     <value>바로 가기를 사용하여 가상 데스크톱 간에 전환합니다.</value>
@@ -214,7 +214,7 @@
     <value>배경 창을 전환합니다.</value>
   </data>
   <data name="NotifyIcon_wheel.subText" xml:space="preserve">
-    <value>휠 다운 + 좌/우 드래그</value>
+    <value>휠 아래로 + 좌/우 드래그</value>
   </data>
   <data name="NotifyIcon_wheel.tooltip" xml:space="preserve">
     <value>스크롤 휠을 사용하여 가상 데스크톱을 전환합니다.</value>
