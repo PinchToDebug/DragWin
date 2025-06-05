@@ -222,4 +222,7 @@
   <data name="Message.error.input" xml:space="preserve">
     <value>セキュリティ設定やアンチチート、またはその他のソフトウェアによる制限のため、一部の機能を完了できませんでした。</value>
   </data>
+  <data name="NotifyIcon.opensettings" xml:space="preserve">
+    <value>セッテイ</value>
+  </data>
 </root>

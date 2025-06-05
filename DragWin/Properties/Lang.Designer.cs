@@ -232,6 +232,15 @@ namespace DragWin.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Settings.
+        /// </summary>
+        public static string NotifyIcon_opensettings {
+            get {
+                return ResourceManager.GetString("NotifyIcon.opensettings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Screen overflow.
         /// </summary>
         public static string NotifyIcon_overflow {

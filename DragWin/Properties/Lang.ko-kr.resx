@@ -222,4 +222,7 @@
   <data name="Message.error.input" xml:space="preserve">
     <value>보안 설정이나 부정행위 방지 또는 기타 소프트웨어의 제한으로 인해 앱의 일부 기능을 완료할 수 없습니다.</value>
   </data>
+  <data name="NotifyIcon.opensettings" xml:space="preserve">
+    <value>설정</value>
+  </data>
 </root>

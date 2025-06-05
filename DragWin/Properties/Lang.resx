@@ -222,4 +222,8 @@
   <data name="Message.error.input" xml:space="preserve">
     <value>Some features of the app couldn't be completed due to security settings or restrictions from anti-cheat or other software.</value>
   </data>
+  <data name="NotifyIcon.opensettings" xml:space="preserve">
+    <value>Settings</value>
+    <comment>Open settings window</comment>
+  </data>
 </root>
