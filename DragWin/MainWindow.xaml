@@ -1,10 +1,12 @@
 ﻿<Window x:Class="DragWin.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:properties="clr-namespace:DragWin.Properties;assembly=DragWin"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:DragWin"
         xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml/tray"
+        xmlns:uii="http://schemas.lepo.co/wpfui/2022/xaml"
         xmlns:prop="clr-namespace:DragWin.Properties"
         
         mc:Ignorable="d"
@@ -90,7 +92,8 @@
                     </MenuItem.ToolTip>
                 </MenuItem>
 
-                <MenuItem x:Name="Exit_Button"  Header="{x:Static prop:Lang.NotifyIcon_exit}" Click="ExitApp" FontSize="16" MouseEnter="Exit_Button_MouseEnter" VerticalAlignment="Center" MouseLeave="Exit_Button_MouseLeave" />
+                <MenuItem x:Name="Settings_Button" Header="{x:Static prop:Lang.NotifyIcon_opensettings}" Icon="{uii:SymbolIcon Symbol=Settings20}" FontSize="16" VerticalAlignment="Center" Click="Settings_Button_Click"/>
+                <MenuItem x:Name="Exit_Button" Header="{x:Static prop:Lang.NotifyIcon_exit}" Click="ExitApp" FontSize="16" MouseEnter="Exit_Button_MouseEnter" VerticalAlignment="Center" MouseLeave="Exit_Button_MouseLeave" />
 
 
             </ContextMenu>

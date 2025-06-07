@@ -24,12 +24,15 @@ using WindowsVirtualDesktopHelper.VirtualDesktopAPI;
 using Microsoft.Toolkit.Uwp.Notifications;
 namespace DragWin
 {
-    public partial class MainWindow
+    public partial class MainWindow 
     {
         [DllImport("user32.dll")]
         static extern void NotifyWinEvent(uint eventType, IntPtr hwnd, int idObject, int idChild);
         [DllImport("user32.dll")]
         public static extern IntPtr GetWindow(IntPtr hWnd, uint uCmd);
+        static SettingsWindow SWindow;
+        static bool shiftDown = false;
+
         // update url
         // -----------------
         string url = "https://api.github.com/repos/PinchToDebug/DragWin/releases/latest";
@@ -140,7 +143,6 @@ namespace DragWin
         // private static bool outsideFix = false;
         private static bool didScrollWindows = false;
         private static bool didChangeVirtualDesktopWinScroll = false;
-
         private static bool isToastNotificationShown = false;
 
         static bool legacyFixOnceOnly = false;
@@ -167,7 +169,7 @@ namespace DragWin
         private static int height;
         private static string exePath = "";
         private static string[] dontMove = {/*"",*/ "Windows Shell Experience Host", "New notification", "System tray overflow window.", "Quick settings", "EarTrumpet", "Notification Overflow", "Task Switching", "Program Manager", "Start", "Notification Center", "Ear Trumpet", "Task Manager", "Windows Input Experience" };
-
+        private static string[] blockedParts;
 
 
 
@@ -313,15 +315,42 @@ namespace DragWin
                     didChangeVirtualDesktopWinScroll = false;
                 }
             }
+            if (nCode >= 0)
+            {
+                int msg = wParam.ToInt32();
+                int vkCode = Marshal.ReadInt32(lParam);
+                if ((msg == 0x0100 || msg == 0x0104) &&( vkCode == 160 || vkCode == 161)) // shift down
+                {
+                    shiftDown = true;
+                }
+                else if (vkCode == 160 || vkCode == 161)
+                {
+                    shiftDown = false;
+                }
+            }
             return CallNextHookEx(hookIdKeyboard, nCode, wParam, lParam);
         }
 
 
         private static IntPtr MouseHookCallback(int nCode, IntPtr wParam, IntPtr lParam)
         {
-
-
             if (!enabled) return 0;
+            if (SWindow != null && shiftDown)
+            {
+                GetWindowThreadProcessId(GetAncestor(innerHwnd(lParam), 2), out uint pid);
+                string[] parts = new[]
+                {
+                    Process.GetProcessById((int)pid).ProcessName,
+                    parentHwndTitle(innerHwnd(lParam)),
+                    GetWindowTitle(innerHwnd(lParam))
+                };
+                blockedParts = parts;
+           
+                SWindow.tempblacklisted_TB1.Text = string.IsNullOrEmpty(parts[0]) ? "*" : parts[0];
+                SWindow.tempblacklisted_TB2.Text = string.IsNullOrEmpty(parts[1]) ? "*" : parts[1];
+                SWindow.tempblacklisted_TB3.Text = string.IsNullOrEmpty(parts[2]) ? "*" : parts[2];
+            }
+
             if (reSizing)
             {
                 clickFix = false;
@@ -449,7 +478,7 @@ namespace DragWin
                     }
                 }
 
-                if (!movingWindow && dontMove.Contains(GetWindowTitle(hWnd)))  // example: moving a window under the taskbar releasing the mouse
+                if (!movingWindow && (dontMove.Contains(GetWindowTitle(hWnd)) || CheckBlacklisted()))  // example: moving a window under the taskbar releasing the mouse
                 {
                     Debug.WriteLine("behind? Click Fixed");
                     Task.Run(() =>
@@ -666,7 +695,7 @@ namespace DragWin
                         StringBuilder sb = new StringBuilder(256);
                         GetWindowText(_hWnd, sb, sb.Capacity);
                         windowTitle = sb.ToString();
-                        if (!string.IsNullOrWhiteSpace(windowTitle) && !dontMove.Contains(GetWindowTitle(_hWnd)))
+                        if (!string.IsNullOrWhiteSpace(windowTitle) && (!dontMove.Contains(GetWindowTitle(_hWnd)) || !CheckBlacklisted()))
                         {
                             if (startRect.left < _rect.right &&
                                 startRect.right > _rect.left &&
@@ -721,7 +750,7 @@ namespace DragWin
                 if (OpacityScrolling && (GetAsyncKeyState(0x12) & 0x8000) != 0) // if Alt is down
                 {
                     IntPtr _hwnd = GetAncestor(innerHwnd(lParam), 2);
-                    if (dontMove.Contains(GetWindowTitle(_hwnd)) | string.IsNullOrEmpty(GetWindowTitle(_hwnd)))
+                    if ((dontMove.Contains(GetWindowTitle(_hwnd)) || CheckBlacklisted()) | string.IsNullOrEmpty(GetWindowTitle(_hwnd)))
                     {
                         return 0;
                     }
@@ -870,6 +899,14 @@ namespace DragWin
                     // fixExplorerInside = false;
                     return 0;
                 }
+                GetWindowThreadProcessId(GetAncestor(innerHwnd(lParam), 2), out uint pid);
+                blockedParts = new[]
+                {
+                    Process.GetProcessById((int)pid).ProcessName,
+                    parentHwndTitle(innerHwnd(lParam)),
+                    GetWindowTitle(innerHwnd(lParam))
+                };
+
                 hitTestCode = HitTest(rect, hookStruct.pt);
                 GetWindowRect(GetAncestor(innerHwnd(lParam), 2), out RECT tempRect);
 
@@ -1142,13 +1179,11 @@ namespace DragWin
                     hWnd = GetAncestor(innerHwnd(lParam), 2);
                     hwndCheck = false;
                 }
-
-                if (dontMove.Contains(GetWindowTitle(hWnd)))
+                if (dontMove.Contains(GetWindowTitle(hWnd)) || CheckBlacklisted())
                 {
                     // doneMove = true;
                     return 0;  // Won't move if hwnd is in the list
                 }
-
                 GetWindowRect(hWnd, out rectBefore);
                 ShowWindow(hWnd, 9); // Set to normal from maximized
                 GetWindowRect(hWnd, out rect);
@@ -1739,6 +1774,54 @@ namespace DragWin
         private void Update_Button_Click(object sender, RoutedEventArgs e)
         {
             Update();
+        }
+
+        private void Settings_Button_Click(object sender, RoutedEventArgs e)
+        {
+            if (SWindow != null)
+            {
+                SWindow.Close();
+            }
+            SWindow = new SettingsWindow();
+            SWindow.Show();
+        }
+
+        private static bool CheckBlacklisted()
+        {
+            if (blockedParts == null || blockedParts.Length < 3) return false;
+            List<string[]> loadedBlocklist = LoadBlockedListFromRegistry();
+            return loadedBlocklist.Any(item =>
+                (item[0] == "*" || item[0] == blockedParts[0]) &&
+                (item[1] == "*" || item[1] == blockedParts[1]) &&
+                (item[2] == "*" || item[2] == blockedParts[2]));
+        }
+
+        private static List<string[]> LoadBlockedListFromRegistry()
+        {
+            var result = new List<string[]>();
+            try
+            {
+                using (RegistryKey key = Registry.CurrentUser.OpenSubKey("SOFTWARE\\DragWin"))
+                {
+                    if (key == null) return result;
+
+                    var blockedItems = key.GetValue("BlockedItems") as string;
+                    if (string.IsNullOrEmpty(blockedItems)) return result;
+
+                    var panels = blockedItems.Split(new[] { "|,|" }, StringSplitOptions.RemoveEmptyEntries);
+                    foreach (var panelData in panels)
+                    {
+                        var texts = panelData.Split(new[] { "<|>" }, StringSplitOptions.None);
+                        if (texts.Length < 3) continue;
+
+                        result.Add(new[] { texts[0], texts[1], texts[2] });
+                    }
+                }
+            }
+            catch
+            {
+            }
+            return result;
         }
 
         private void Exit_Button_MouseLeave(object sender, MouseEventArgs e)

@@ -226,4 +226,19 @@
     <value>Settings</value>
     <comment>Open settings window</comment>
   </data>
+  <data name="SettingsWindow.HoldShiftInstruction" xml:space="preserve">
+    <value>Hold down the SHIFT key, then click and drag the mouse to select an area of a window.</value>
+  </data>
+  <data name="SettingsWindow.ExecutableName" xml:space="preserve">
+    <value>Executable name</value>
+  </data>
+  <data name="SettingsWindow.WildcardInstruction" xml:space="preserve">
+    <value>You can use * as a wildcard for any part.</value>
+  </data>
+  <data name="SettingsWindow.InnerWindowTitle" xml:space="preserve">
+    <value>Inner window title</value>
+  </data>
+  <data name="SettingsWindow.FullWindowTitle" xml:space="preserve">
+    <value>Full window title</value>
+  </data>
 </root>

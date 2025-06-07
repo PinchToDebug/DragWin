@@ -154,7 +154,7 @@
     <value>スタートアップ起動への登録に失敗しました</value>
   </data>
   <data name="Message.error.autorun.remove" xml:space="preserve">
-    <value>スタートアップ起動からの削除に失敗しました</value>
+    <value>スタートアップからの削除エラー</value>
   </data>
   <data name="NotifyIcon.check.update" xml:space="preserve">
     <value>更新を確認</value>
@@ -224,5 +224,20 @@
   </data>
   <data name="NotifyIcon.opensettings" xml:space="preserve">
     <value>セッテイ</value>
+  </data>
+  <data name="SettingsWindow.HoldShiftInstruction" xml:space="preserve">
+    <value>シフト キー を ホールド し、マウス を クリック アンド ドラッグ して ウィンドウ の エリア を セレクト します。</value>
+  </data>
+  <data name="SettingsWindow.ExecutableName" xml:space="preserve">
+    <value>エグゼキュタブル ネーム&lt;</value>
+  </data>
+  <data name="SettingsWindow.WildcardInstruction" xml:space="preserve">
+    <value>アスタリスク (*) は ワイルドカード として どの パート にも 使えます。</value>
+  </data>
+  <data name="SettingsWindow.InnerWindowTitle" xml:space="preserve">
+    <value>インナー ウィンドウ タイトル</value>
+  </data>
+  <data name="SettingsWindow.FullWindowTitle" xml:space="preserve">
+    <value>フル ウィンドウ タイトル</value>
   </data>
 </root>

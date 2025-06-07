@@ -331,6 +331,51 @@ namespace DragWin.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Executable name.
+        /// </summary>
+        public static string SettingsWindow_ExecutableName {
+            get {
+                return ResourceManager.GetString("SettingsWindow.ExecutableName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Full window title.
+        /// </summary>
+        public static string SettingsWindow_FullWindowTitle {
+            get {
+                return ResourceManager.GetString("SettingsWindow.FullWindowTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Hold down the SHIFT key, then click and drag the mouse to select an area of a window..
+        /// </summary>
+        public static string SettingsWindow_HoldShiftInstruction {
+            get {
+                return ResourceManager.GetString("SettingsWindow.HoldShiftInstruction", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Inner window title.
+        /// </summary>
+        public static string SettingsWindow_InnerWindowTitle {
+            get {
+                return ResourceManager.GetString("SettingsWindow.InnerWindowTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You can use * as a wildcard for any part..
+        /// </summary>
+        public static string SettingsWindow_WildcardInstruction {
+            get {
+                return ResourceManager.GetString("SettingsWindow.WildcardInstruction", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to New release!.
         /// </summary>
         public static string Toast_release_available {
