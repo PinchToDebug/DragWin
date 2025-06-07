@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -202,7 +202,7 @@
     <value>창 드래그를 화면 경계로 제한합니다.</value>
   </data>
   <data name="NotifyIcon_opacity.subText" xml:space="preserve">
-    <value>Alt + 스크롤 휠</value>
+    <value>Alt + 휠 스크롤</value>
   </data>
   <data name="NotifyIcon_opacity.tooltip" xml:space="preserve">
     <value>바로 가기를 사용하여 가상 데스크톱 간에 전환합니다.</value>
@@ -214,25 +214,26 @@
     <value>배경 창을 전환합니다.</value>
   </data>
   <data name="NotifyIcon_wheel.subText" xml:space="preserve">
-    <value>휠 아래로 + 좌/우 드래그</value>
+    <value>휠 아래로 + 좌/우 끌기</value>
   </data>
   <data name="NotifyIcon_wheel.tooltip" xml:space="preserve">
-    <value>스크롤 휠을 사용하여 가상 데스크톱을 전환합니다.</value>
+    <value>휠 스크롤을 사용하여 가상 데스크톱을 전환합니다.</value>
   </data>
   <data name="Message.error.input" xml:space="preserve">
     <value>보안 설정이나 부정행위 방지 또는 기타 소프트웨어의 제한으로 인해 앱의 일부 기능을 완료할 수 없습니다.</value>
   </data>
   <data name="NotifyIcon.opensettings" xml:space="preserve">
     <value>설정</value>
+    <comment>Open settings window</comment>
   </data>
   <data name="SettingsWindow.HoldShiftInstruction" xml:space="preserve">
-    <value>Shift 키를 누른 상태에서 마우스를 드래그하여 창의 영역을 선택하세요.</value>
+    <value>SHIFT 키를 누른 다음 마우스를 끌어서 창의 영역을 선택합니다.</value>
   </data>
   <data name="SettingsWindow.ExecutableName" xml:space="preserve">
     <value>실행 파일 이름</value>
   </data>
   <data name="SettingsWindow.WildcardInstruction" xml:space="preserve">
-    <value>* 는 모든 부분에 대한 와일드카드로 사용할 수 있습니다.</value>
+    <value>모든 것에 대한 와일드카드로 *를 사용할 수 있습니다.</value>
   </data>
   <data name="SettingsWindow.InnerWindowTitle" xml:space="preserve">
     <value>내부 창 제목</value>
