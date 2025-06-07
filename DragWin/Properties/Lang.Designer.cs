@@ -349,7 +349,7 @@ namespace DragWin.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Hold down the SHIFT key, then click and drag the mouse to select an area of a window..
+        ///   Looks up a localized string similar to Hold down the SHIFT key, then drag the mouse to select an area of a window..
         /// </summary>
         public static string SettingsWindow_HoldShiftInstruction {
             get {

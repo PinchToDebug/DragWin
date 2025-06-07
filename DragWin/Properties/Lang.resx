@@ -227,7 +227,7 @@
     <comment>Open settings window</comment>
   </data>
   <data name="SettingsWindow.HoldShiftInstruction" xml:space="preserve">
-    <value>Hold down the SHIFT key, then click and drag the mouse to select an area of a window.</value>
+    <value>Hold down the SHIFT key, then drag the mouse to select an area of a window.</value>
   </data>
   <data name="SettingsWindow.ExecutableName" xml:space="preserve">
     <value>Executable name</value>

@@ -226,7 +226,7 @@
     <value>설정</value>
   </data>
   <data name="SettingsWindow.HoldShiftInstruction" xml:space="preserve">
-    <value>SHIFT 키를 누른 상태에서 마우스를 클릭하고 드래그하여 창의 영역을 선택하세요.</value>
+    <value>Shift 키를 누른 상태에서 마우스를 드래그하여 창의 영역을 선택하세요.</value>
   </data>
   <data name="SettingsWindow.ExecutableName" xml:space="preserve">
     <value>실행 파일 이름</value>

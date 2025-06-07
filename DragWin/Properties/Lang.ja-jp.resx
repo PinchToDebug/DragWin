@@ -226,7 +226,7 @@
     <value>セッテイ</value>
   </data>
   <data name="SettingsWindow.HoldShiftInstruction" xml:space="preserve">
-    <value>シフト キー を ホールド し、マウス を クリック アンド ドラッグ して ウィンドウ の エリア を セレクト します。</value>
+    <value>シフトキーをホールドして、マウスをドラッグしながらウィンドウのエリアをセレクトしてください。</value>
   </data>
   <data name="SettingsWindow.ExecutableName" xml:space="preserve">
     <value>エグゼキュタブル ネーム&lt;</value>
