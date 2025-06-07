@@ -21,13 +21,8 @@
     Margin="0,127,0,114" RightClick="TrayIcon_RightClick">
         <ui:NotifyIcon.Menu>
             <ContextMenu MinWidth="65">
-                <MenuItem Name="versionHeader" Header="🚧 Beta " IsEnabled="False" HorizontalAlignment="Center" Background="{x:Null}" FontFamily="Segoe Print" >
-                    <MenuItem.Foreground>
-                        <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
-                            <GradientStop Color="#FF68D42D" Offset="1"/>
-                            <GradientStop Color="#FFF1EA38"/>
-                        </LinearGradientBrush>
-                    </MenuItem.Foreground>
+                <MenuItem Name="versionHeader" Header="v" IsEnabled="False" HorizontalAlignment="Center" Background="{x:Null}" FontFamily="Segoe Print" >
+ 
                 </MenuItem>
                 <MenuItem x:Name="Update_Button" Header="{x:Static prop:Lang.NotifyIcon_check_update}" Click="Update_Button_Click" Foreground="#FF91EF78" VerticalAlignment="Center" HorizontalAlignment="Center" />
                 <MenuItem x:Name="Enable_Button" Header="{x:Static prop:Lang.NotifyIcon_enable}" IsCheckable="True"  Checked="Enable_Checked"  Unchecked="Enable_Checked" IsChecked="True" />
