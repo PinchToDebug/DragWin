@@ -20,6 +20,7 @@ It's an application that lets you move windows **without holding down Alt or Con
 - Multi-language support
 - Doesn't affect fullscreen applications
 - Doesn't affect right-clicking
+- Option to exclude from draging
 
 ## 🖼️ Preview
 
