@@ -145,6 +145,8 @@ namespace DragWin
         private static bool didChangeVirtualDesktopWinScroll = false;
         private static bool isToastNotificationShown = false;
 
+        private uint _taskbarRestartMessage;
+
         static bool legacyFixOnceOnly = false;
         static uint processId1, processId2 = 0;
         static bool reSizing;
@@ -235,7 +237,15 @@ namespace DragWin
         }
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
+            _taskbarRestartMessage = RegisterWindowMessage("TaskbarCreated");
+            var hwndSource = HwndSource.FromHwnd(new WindowInteropHelper(this).Handle);
+            hwndSource.AddHook(WndProc);
             SetWindowLong(new WindowInteropHelper(this).Handle, GWL_EX_STYLE, (GetWindowLong(new WindowInteropHelper(this).Handle, GWL_EX_STYLE) | WS_EX_TOOLWINDOW) & ~WS_EX_APPWINDOW);
+        }
+        private IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
+        {
+            if (msg == _taskbarRestartMessage) TrayIcon.Register();
+            return IntPtr.Zero;
         }
         public void LoadVDAPI()
         {

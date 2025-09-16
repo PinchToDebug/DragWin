@@ -11,6 +11,8 @@ using Point = System.Drawing.Point;
 
 public static class Interop
 {
+    [DllImport("user32.dll", CharSet = CharSet.Auto)]
+    public static extern uint RegisterWindowMessage(string lpString);
     [DllImport("user32.dll", SetLastError = true)]
     public static extern bool GetLayeredWindowAttributes(IntPtr hwnd, out uint pcrKey, out byte pbAlpha, out uint pdwFlags);
     
