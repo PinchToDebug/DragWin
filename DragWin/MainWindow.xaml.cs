@@ -24,7 +24,7 @@ using WindowsVirtualDesktopHelper.VirtualDesktopAPI;
 using Microsoft.Toolkit.Uwp.Notifications;
 namespace DragWin
 {
-    public partial class MainWindow 
+    public partial class MainWindow
     {
         [DllImport("user32.dll")]
         static extern void NotifyWinEvent(uint eventType, IntPtr hwnd, int idObject, int idChild);
@@ -181,7 +181,7 @@ namespace DragWin
             mutex = new Mutex(true, mutexId, out bool createdNew);
             if (!createdNew)
             {
-                 Application.Current.Shutdown();
+                Application.Current.Shutdown();
             }
             hookIdMouse = SetHook(WH_MOUSE_LL, mouseProc);
             hookIdKeyboard = SetKeyboardHook(WH_KEYBOARD_LL, keyboardProc);
@@ -229,7 +229,7 @@ namespace DragWin
             ScrollWindows_Button.IsChecked = canScrollWindows;
             SetTop_Button.IsChecked = bringToFront;
             Autorun_Button.IsChecked = startOnLogin;
-            Enable_Button.IsChecked = enabled; 
+            Enable_Button.IsChecked = enabled;
             Update();
 
         }
@@ -282,7 +282,7 @@ namespace DragWin
         {
             if (isToastNotificationShown) return;
             isToastNotificationShown = true;
-            await Task.Run(() =>  new ToastContentBuilder().AddText(Properties.Lang.Message_error_input).Show());
+            await Task.Run(() => new ToastContentBuilder().AddText(Properties.Lang.Message_error_input).Show());
             await Task.Delay(7000);
             isToastNotificationShown = false;
         }
@@ -296,7 +296,7 @@ namespace DragWin
             {
                 action?.Invoke();
             }
-            catch 
+            catch
             {
                 ShowErrorNotifInput();
             }
@@ -319,7 +319,7 @@ namespace DragWin
             {
                 int msg = wParam.ToInt32();
                 int vkCode = Marshal.ReadInt32(lParam);
-                if ((msg == 0x0100 || msg == 0x0104) &&( vkCode == 160 || vkCode == 161)) // shift down
+                if ((msg == 0x0100 || msg == 0x0104) && (vkCode == 160 || vkCode == 161)) // shift down
                 {
                     shiftDown = true;
                 }
@@ -345,7 +345,7 @@ namespace DragWin
                     GetWindowTitle(innerHwnd(lParam))
                 };
                 blockedParts = parts;
-           
+
                 SWindow.tempblacklisted_TB1.Text = string.IsNullOrEmpty(parts[0]) ? "*" : parts[0];
                 SWindow.tempblacklisted_TB2.Text = string.IsNullOrEmpty(parts[1]) ? "*" : parts[1];
                 SWindow.tempblacklisted_TB3.Text = string.IsNullOrEmpty(parts[2]) ? "*" : parts[2];
@@ -740,7 +740,7 @@ namespace DragWin
                 {
                     if ((short)(hookStruct.mouseData >> 16) < 0)
                     {
-                        Task.Run(() => { VDAPI.SwitchBackward(); });      
+                        Task.Run(() => { VDAPI.SwitchBackward(); });
                     }
                     else
                     {
@@ -790,20 +790,20 @@ namespace DragWin
                     SetLayeredWindowAttributes(_hwnd, 0, alpha, (uint)LWA_ALPHA);
                     return -1;
                 }
-                if (DesktopScrolling && ((GetAsyncKeyState(0x5B) & 0x8000) != 0 || (GetAsyncKeyState(0x5C) & 0x8000) != 0)) 
+                if (DesktopScrolling && ((GetAsyncKeyState(0x5B) & 0x8000) != 0 || (GetAsyncKeyState(0x5C) & 0x8000) != 0))
                 {
-                   
+
                     didChangeVirtualDesktopWinScroll = true;
                     try
                     {
                         SafeInput(() => new InputSimulator().Keyboard.KeyDown(VirtualKeyCode.ESCAPE));
                     }
                     catch { }
-                                    
+
                     if ((short)(hookStruct.mouseData >> 16) < 0)
                     {
                         Task.Run(() => { VDAPI.SwitchBackward(); });
-                    
+
                         Debug.WriteLine("VDesktop changed -1");
                     }
                     else
@@ -812,7 +812,7 @@ namespace DragWin
                         Debug.WriteLine("VDesktop changed +1");
                     }
                     return -1; // to prevent scrolling if it doesn't changes desktop
-                   
+
                 }
             }
 
@@ -1041,7 +1041,7 @@ namespace DragWin
                             {
                                 //ShowErrorNotif(e.Message);
                             }
-                         
+
 
                         });
                     }
@@ -1278,10 +1278,10 @@ namespace DragWin
                         Debug.WriteLine("normalize: 3");
                         MoveWindow(hWnd, hookStruct.pt.X - width / 2, 0, width, height, true);
                     }
-                    if ( rect.left <= 0 && rectBefore.top <= 1)
+                    if (rect.left <= 0 && rectBefore.top <= 1)
                     {
                         Debug.WriteLine("normalize: 4");
-                        if (rect.top <=0)
+                        if (rect.top <= 0)
                         {
                             MoveWindow(hWnd, 0, 0, width, height, true);
                         }
@@ -1291,7 +1291,7 @@ namespace DragWin
                         }
                     }
                     screen = Screen.FromPoint(currentMousePosition);
-                    if (rect.right >= screen.WorkingArea.Width  && rectBefore.top <= 1)
+                    if (rect.right >= screen.WorkingArea.Width && rectBefore.top <= 1)
                     {
                         Debug.WriteLine("normalize: 5");
                         if (rect.top <= 0)
@@ -1362,7 +1362,7 @@ namespace DragWin
                                 SafeInput(() => new InputSimulator().Keyboard.KeyDown(VirtualKeyCode.LSHIFT));
                             });
                         }
-                       
+
                         IntPtr _hwnd = FindWindowEx(0, 0, null, parentHwndTitle(GetAncestor(innerHwnd(lParam), 2)));
                         PostMessage(_hwnd, WM_SYSCOMMAND, SC_MOVE, lParam);
                         if (isChromium(_hwnd, lParam) && !usedFancyZones)
