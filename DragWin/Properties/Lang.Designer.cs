@@ -205,6 +205,24 @@ namespace DragWin.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Maximize on top.
+        /// </summary>
+        public static string NotifyIcon_maximizeOnTop {
+            get {
+                return ResourceManager.GetString("NotifyIcon.maximizeOnTop", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Maximizes the window when it goes out of the top screenbound.
+        /// </summary>
+        public static string NotifyIcon_maximizeOnTop_tooltip {
+            get {
+                return ResourceManager.GetString("NotifyIcon.maximizeOnTop.tooltip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Opacity scrolling.
         /// </summary>
         public static string NotifyIcon_opacity {
@@ -300,6 +318,24 @@ namespace DragWin.Properties {
         public static string NotifyIcon_settop {
             get {
                 return ResourceManager.GetString("NotifyIcon.settop", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Window Snapping.
+        /// </summary>
+        public static string NotifyIcon_useSnapAssist {
+            get {
+                return ResourceManager.GetString("NotifyIcon.useSnapAssist", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Snap windows to top or sides when released after dragging..
+        /// </summary>
+        public static string NotifyIcon_useSnapAssist_tooltip {
+            get {
+                return ResourceManager.GetString("NotifyIcon.useSnapAssist.tooltip", resourceCulture);
             }
         }
         

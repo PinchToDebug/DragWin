@@ -131,6 +131,8 @@ namespace DragWin
         private static bool dontTouchMove = false;
         private static bool touchMoving = false;
         private static bool usedFancyZones = false;
+        private static bool useSnapAssist = true;
+        private static bool maximizeOnTop = true;
         private static bool fancyZonesWasChromium = false;
         private static bool fancyZonesRunning = false;
         // private static bool leftdown = false;
@@ -212,6 +214,8 @@ namespace DragWin
             if (KeyExists("canResizeCorners")) canResizeCorners = (bool)ReadKeyValue("canResizeCorners");
             if (KeyExists("canScrollWindows")) canScrollWindows = (bool)ReadKeyValue("canScrollWindows");
             if (KeyExists("startOnLogin")) startOnLogin = (bool)ReadKeyValue("startOnLogin");
+            if (KeyExists("useSnapAssist")) useSnapAssist = (bool)ReadKeyValue("useSnapAssist");
+            if (KeyExists("maximizeOnTop")) maximizeOnTop = (bool)ReadKeyValue("maximizeOnTop");
 
             AutoFancyZones_Button.Visibility = Process.GetProcessesByName("PowerToys.FancyZones").Any(p => !p.HasExited) ? Visibility.Visible : Visibility.Collapsed;
             if (KeyExists("AutoFancyZones") && AutoFancyZones_Button.Visibility == Visibility.Visible)
@@ -226,6 +230,9 @@ namespace DragWin
             DesktopScrolling_Button.IsChecked = DesktopScrolling;
             Resize_Button.IsChecked = canResizeCorners;
             Corner_Button.IsChecked = canOverflow;
+            UseSnapAssist_Button.IsChecked = useSnapAssist;
+            MaximizeOnTop_Button.IsEnabled = useSnapAssist;
+            MaximizeOnTop_Button.IsChecked = maximizeOnTop;
             Opacity_Button.IsChecked = OpacityScrolling;
             WheelGesture_Button.IsChecked = WheelGesture;
             ScrollWindows_Button.IsChecked = canScrollWindows;
@@ -1096,9 +1103,9 @@ namespace DragWin
                     }
                     clickFix = true;
                     var currScreen = Screen.GetBounds(new System.Drawing.Point(hookStruct.pt.X, hookStruct.pt.Y));
-                    if (hookStruct.pt.Y <= 40 | rect.top < 0 && !usedFancyZones)
+                    if (!maximizeOnTop && useSnapAssist && (hookStruct.pt.Y <= 40 && !usedFancyZones))
                     {
-                        Debug.WriteLine("set full");
+                        Debug.WriteLine("set full 1");
                         Task.Run(() =>
                         {
                             ShowWindow(hWnd, 3);
@@ -1106,7 +1113,18 @@ namespace DragWin
                             GetWindowRect(hWnd, out rect);
                         });
                     }
-                    else if (hookStruct.pt.X <= currScreen.X + 40 && !usedFancyZones)
+                   // if (useSnapAssist && (hookStruct.pt.Y <= 40 | rect.top < 0 && !usedFancyZones))
+                    else if (maximizeOnTop && useSnapAssist && (hookStruct.pt.Y <= 40 | rect.top < 0 && !usedFancyZones))
+                    {
+                        Debug.WriteLine("set full 2");
+                        Task.Run(() =>
+                        {
+                            ShowWindow(hWnd, 3);
+                            Thread.Sleep(10);
+                            GetWindowRect(hWnd, out rect);
+                        });
+                    }
+                    else if (useSnapAssist && (hookStruct.pt.X <= currScreen.X + 40 && !usedFancyZones))
                     {
                         Debug.WriteLine("set full left");
                         Task.Run(() =>
@@ -1119,7 +1137,7 @@ namespace DragWin
                             GetWindowRect(hWnd, out rect);
                         });
                     }
-                    else if (hookStruct.pt.X - Screen.GetBounds(new System.Drawing.Point(hookStruct.pt.X, hookStruct.pt.Y)).X + 40 >= currScreen.Width && !usedFancyZones)
+                    else if (useSnapAssist && (hookStruct.pt.X - Screen.GetBounds(new System.Drawing.Point(hookStruct.pt.X, hookStruct.pt.Y)).X + 40 >= currScreen.Width && !usedFancyZones))
                     {
                         Debug.WriteLine("set full right");
                         Task.Run(() =>
@@ -1283,12 +1301,12 @@ namespace DragWin
                         }
                     }
 
-                    if (rect.top <= 0 && rect.left >= 1)
+                    if (useSnapAssist && ( rect.top <= 0 && rect.left >= 1))
                     {
                         Debug.WriteLine("normalize: 3");
                         MoveWindow(hWnd, hookStruct.pt.X - width / 2, 0, width, height, true);
                     }
-                    if (rect.left <= 0 && rectBefore.top <= 1)
+                    if (useSnapAssist && (rect.left <= 0 && rectBefore.top <= 1))
                     {
                         Debug.WriteLine("normalize: 4");
                         if (rect.top <= 0)
@@ -1301,7 +1319,7 @@ namespace DragWin
                         }
                     }
                     screen = Screen.FromPoint(currentMousePosition);
-                    if (rect.right >= screen.WorkingArea.Width && rectBefore.top <= 1)
+                    if (useSnapAssist && (rect.right >= screen.WorkingArea.Width && rectBefore.top <= 1))
                     {
                         Debug.WriteLine("normalize: 5");
                         if (rect.top <= 0)
@@ -1624,6 +1642,15 @@ namespace DragWin
         private void Corner_Button_Checked(object sender, RoutedEventArgs e)
         {
             WriteKey(Corner_Button, nameof(canOverflow), ref canOverflow);
+        }
+        private void UseSnapAssist_Button_Checked(object sender, RoutedEventArgs e)
+        {
+            WriteKey(UseSnapAssist_Button, nameof(useSnapAssist), ref useSnapAssist);
+            MaximizeOnTop_Button.IsEnabled = useSnapAssist;
+        }
+        private void MaximizeOnTop_Button_Checked(object sender, RoutedEventArgs e)
+        {
+            WriteKey(MaximizeOnTop_Button, nameof(maximizeOnTop), ref maximizeOnTop);
         }
         private void WheelGesture_Button_Checked(object sender, RoutedEventArgs e)
         {

@@ -241,4 +241,16 @@
   <data name="SettingsWindow.FullWindowTitle" xml:space="preserve">
     <value>전체 창 제목</value>
   </data>
+  <data name="NotifyIcon.useSnapAssist" xml:space="preserve">
+    <value>창 맞춤</value>
+  </data>
+  <data name="NotifyIcon.useSnapAssist.tooltip" xml:space="preserve">
+    <value>창을 끌어 놓으면 화면의 가장자리나 위쪽에 맞춰집니다.</value>
+  </data>
+  <data name="NotifyIcon.maximizeOnTop" xml:space="preserve">
+    <value>상단에서 최대화</value>
+  </data>
+  <data name="NotifyIcon.maximizeOnTop.tooltip" xml:space="preserve">
+    <value>창이 화면 상단을 벗어나면 최대화됩니다.</value>
+  </data>
 </root>

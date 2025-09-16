@@ -43,11 +43,21 @@
                 </MenuItem>
 
                 <MenuItem x:Name="Resize_Button" Header="{x:Static prop:Lang.NotifyIcon_resize}" IsCheckable="True" Checked="Resize_Button_Checked"  Unchecked="Resize_Button_Checked"  />
-                
-                <MenuItem x:Name="AutoFancyZones_Button" Header="{x:Static prop:Lang.NotifyIcon_fancyzones}" IsCheckable="True" Unchecked="AutoFancyZones_Button_Checked" Checked="AutoFancyZones_Button_Checked"   />
+
+                <MenuItem x:Name="AutoFancyZones_Button" Header="{x:Static prop:Lang.NotifyIcon_fancyzones}" StaysOpenOnClick="True" IsCheckable="True" Unchecked="AutoFancyZones_Button_Checked" Checked="AutoFancyZones_Button_Checked"   />
                 <MenuItem x:Name="Corner_Button" Header="{x:Static prop:Lang.NotifyIcon_overflow}" IsCheckable="True" Checked="Corner_Button_Checked"  Unchecked="Corner_Button_Checked" >
                     <MenuItem.ToolTip>
                         <ToolTip Content="{x:Static prop:Lang.NotifyIcon_overflow_tooltip}" />
+                    </MenuItem.ToolTip>
+                </MenuItem>
+                <MenuItem x:Name="UseSnapAssist_Button" Header="{x:Static prop:Lang.NotifyIcon_useSnapAssist}" IsCheckable="True" Checked="UseSnapAssist_Button_Checked" Unchecked="UseSnapAssist_Button_Checked" >
+                    <MenuItem.ToolTip>
+                        <ToolTip Content="{x:Static prop:Lang.NotifyIcon_useSnapAssist_tooltip}" />
+                    </MenuItem.ToolTip>
+                </MenuItem>
+                <MenuItem x:Name="MaximizeOnTop_Button" Header="{x:Static prop:Lang.NotifyIcon_maximizeOnTop}" IsCheckable="True" Checked="MaximizeOnTop_Button_Checked" Unchecked="MaximizeOnTop_Button_Checked" >
+                    <MenuItem.ToolTip>
+                        <ToolTip Content="{x:Static prop:Lang.NotifyIcon_maximizeOnTop_tooltip}" />
                     </MenuItem.ToolTip>
                 </MenuItem>
                 <MenuItem x:Name="WheelGesture_Button" IsCheckable="True" Checked="WheelGesture_Button_Checked" Unchecked="WheelGesture_Button_Checked">

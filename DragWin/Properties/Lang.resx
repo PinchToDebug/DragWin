@@ -241,4 +241,16 @@
   <data name="SettingsWindow.FullWindowTitle" xml:space="preserve">
     <value>Full window title</value>
   </data>
+  <data name="NotifyIcon.useSnapAssist" xml:space="preserve">
+    <value>Window Snapping</value>
+  </data>
+  <data name="NotifyIcon.useSnapAssist.tooltip" xml:space="preserve">
+    <value>Snap windows to top or sides when released after dragging.</value>
+  </data>
+  <data name="NotifyIcon.maximizeOnTop" xml:space="preserve">
+    <value>Maximize on top</value>
+  </data>
+  <data name="NotifyIcon.maximizeOnTop.tooltip" xml:space="preserve">
+    <value>Maximizes the window when it goes out of the top screenbound</value>
+  </data>
 </root>

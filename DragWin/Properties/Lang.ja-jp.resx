@@ -240,4 +240,16 @@
   <data name="SettingsWindow.FullWindowTitle" xml:space="preserve">
     <value>フル ウィンドウ タイトル</value>
   </data>
+  <data name="NotifyIcon.useSnapAssist" xml:space="preserve">
+    <value>ウィンドウのスナップ</value>
+  </data>
+  <data name="NotifyIcon.useSnapAssist.tooltip" xml:space="preserve">
+    <value>ドラッグを離すと、ウィンドウが画面の端や上部にスナップします。</value>
+  </data>
+  <data name="NotifyIcon.maximizeOnTop" xml:space="preserve">
+    <value>画面上端で最大化</value>
+  </data>
+  <data name="NotifyIcon.maximizeOnTop.tooltip" xml:space="preserve">
+    <value>画面の上端を超えるとウィンドウを最大化します</value>
+  </data>
 </root>
