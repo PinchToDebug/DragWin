@@ -1,4 +1,15 @@
+<div align="center">
+
+<img src="./DragWin/default.ico" alt="logo" width="64">
+
 # Dragwin
+
+</div>
+
+🌏: [**English**](/) [한국어](/README_KO.md)
+
+---
+
 It's an application that lets you move windows **without holding down Alt or Control**, with some extra features.
 
 <a href="https://github.com/PinchToDebug/DragWin/releases/latest"><img src="https://img.shields.io/github/downloads/PinchToDebug/DragWin/total" alt="Downloads"></a>
