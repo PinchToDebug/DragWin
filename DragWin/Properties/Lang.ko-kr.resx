@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -60,45 +60,45 @@
             : and then encoded with base64 encoding.
     -->
   <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
-    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
     <xsd:element name="root" msdata:IsDataSet="true">
       <xsd:complexType>
         <xsd:choice maxOccurs="unbounded">
           <xsd:element name="metadata">
             <xsd:complexType>
               <xsd:sequence>
-                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
               </xsd:sequence>
-              <xsd:attribute name="name" use="required" type="xsd:string" />
-              <xsd:attribute name="type" type="xsd:string" />
-              <xsd:attribute name="mimetype" type="xsd:string" />
-              <xsd:attribute ref="xml:space" />
+              <xsd:attribute name="name" use="required" type="xsd:string"/>
+              <xsd:attribute name="type" type="xsd:string"/>
+              <xsd:attribute name="mimetype" type="xsd:string"/>
+              <xsd:attribute ref="xml:space"/>
             </xsd:complexType>
           </xsd:element>
           <xsd:element name="assembly">
             <xsd:complexType>
-              <xsd:attribute name="alias" type="xsd:string" />
-              <xsd:attribute name="name" type="xsd:string" />
+              <xsd:attribute name="alias" type="xsd:string"/>
+              <xsd:attribute name="name" type="xsd:string"/>
             </xsd:complexType>
           </xsd:element>
           <xsd:element name="data">
             <xsd:complexType>
               <xsd:sequence>
-                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
-                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
               </xsd:sequence>
-              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
-              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
-              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
-              <xsd:attribute ref="xml:space" />
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
+              <xsd:attribute ref="xml:space"/>
             </xsd:complexType>
           </xsd:element>
           <xsd:element name="resheader">
             <xsd:complexType>
               <xsd:sequence>
-                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
               </xsd:sequence>
-              <xsd:attribute name="name" type="xsd:string" use="required" />
+              <xsd:attribute name="name" type="xsd:string" use="required"/>
             </xsd:complexType>
           </xsd:element>
         </xsd:choice>
@@ -124,7 +124,7 @@
     <value>설치</value>
   </data>
   <data name="Toast.release.available" xml:space="preserve">
-    <value>새로운 릴리스!</value>
+    <value>새 릴리스!</value>
   </data>
   <data name="Toast.update.failed" xml:space="preserve">
     <value>업데이트에 실패했습니다.</value>
@@ -199,7 +199,7 @@
     <value>바로 가기를 사용하여 창문의 투명도를 조정합니다.</value>
   </data>
   <data name="NotifyIcon.overflow.tooltip" xml:space="preserve">
-    <value>창 드래그를 화면 경계로 제한합니다.</value>
+    <value>창 끌기를 화면 경계로 제한합니다.</value>
   </data>
   <data name="NotifyIcon_opacity.subText" xml:space="preserve">
     <value>Alt + 휠 스크롤</value>
@@ -224,7 +224,7 @@
   </data>
   <data name="NotifyIcon.opensettings" xml:space="preserve">
     <value>설정</value>
-    <comment>Open settings window</comment>
+    <comment>설정 창 열기</comment>
   </data>
   <data name="SettingsWindow.HoldShiftInstruction" xml:space="preserve">
     <value>SHIFT 키를 누른 다음 마우스를 끌어서 창의 영역을 선택합니다.</value>
@@ -233,7 +233,7 @@
     <value>실행 파일 이름</value>
   </data>
   <data name="SettingsWindow.WildcardInstruction" xml:space="preserve">
-    <value>모든 것에 대한 와일드카드로 *를 사용할 수 있습니다.</value>
+    <value>*를 모든 부분에 대한 와일드카드로 사용할 수 있습니다.</value>
   </data>
   <data name="SettingsWindow.InnerWindowTitle" xml:space="preserve">
     <value>내부 창 제목</value>
