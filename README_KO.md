@@ -50,6 +50,6 @@ https://github.com/user-attachments/assets/cdb68e00-e086-44e6-85c2-d8198305e6e0
 
 이 프로젝트는 [WPF UI](https://github.com/lepoco/wpfui), [Input Simulator](https://github.com/michaelnoonan/inputsimulator), [Windows Community Toolkit](https://github.com/CommunityToolkit/WindowsCommunityToolkit/tree/main) 및 [VirtualDesktopAPI](https://github.com/dankrusi)를 사용하여 구축되었으며, 모두 [MIT 라이선스](https://github.com/lepoco/wpfui/blob/main/LICENSE).하에 배포됩니다.
 
-## ❤ 라이선스
+## 🌏 번역
 
-한국어: 비너스걸💗(https://github.com/VenusGirl)
+한국어: [비너스걸💗](https://github.com/VenusGirl)
