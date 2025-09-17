@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="./DragWin/default.ico" alt="logo" width="128">
+<img src="./DragWin/default.ico" alt="logo" width="64">
 
 # Dragwin
 
