@@ -720,9 +720,10 @@ namespace DragWin
                                 startRect.bottom > _rect.top
                                 )
                             {
-                                if (!dontMove.Contains(parentHwndTitle(GetAncestor(_hWnd, 2))))
+                                var hwnd = GetAncestor(_hWnd, 2);
+                                if (!dontMove.Contains(parentHwndTitle(hwnd)))
                                 {
-                                    windowOrder.Add(GetAncestor(_hWnd, 2));
+                                    windowOrder.Add(hwnd);
                                 }
                             }
                         }
