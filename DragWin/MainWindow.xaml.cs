@@ -656,6 +656,11 @@ namespace DragWin
                         touchPointers[i].PointerInfo.PtPixelLocation.Y = hookStruct.pt.Y;
                         touchPointers[i].PointerInfo.PointerFlags = PointerFlags.DOWN | PointerFlags.INRANGE | PointerFlags.INCONTACT;
                     }
+                    Task.Run(() =>
+                    {
+                        MouseEvent(MouseEventFlags.LeftDown);
+                        MouseEvent(MouseEventFlags.LeftUp);
+                    });
                 }
                 else
                 {
