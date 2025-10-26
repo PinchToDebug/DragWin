@@ -1304,7 +1304,7 @@ namespace DragWin
                         }
                     }
 
-                    if (useSnapAssist && ( rect.top <= 0 && rect.left >= 1))
+                    if (useSnapAssist && (rect.top <= 0 && rect.left >= 1))
                     {
                         Debug.WriteLine("normalize: 3");
                         MoveWindow(hWnd, hookStruct.pt.X - width / 2, 0, width, height, true);
