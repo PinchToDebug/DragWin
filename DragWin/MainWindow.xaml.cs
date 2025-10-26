@@ -720,7 +720,10 @@ namespace DragWin
                                 startRect.bottom > _rect.top
                                 )
                             {
-                                windowOrder.Add(GetAncestor(_hWnd, 2));
+                                if (!dontMove.Contains(parentHwndTitle(GetAncestor(_hWnd, 2))))
+                                {
+                                    windowOrder.Add(GetAncestor(_hWnd, 2));
+                                }
                             }
                         }
                     }
@@ -1113,7 +1116,7 @@ namespace DragWin
                             GetWindowRect(hWnd, out rect);
                         });
                     }
-                   // if (useSnapAssist && (hookStruct.pt.Y <= 40 | rect.top < 0 && !usedFancyZones))
+                    // if (useSnapAssist && (hookStruct.pt.Y <= 40 | rect.top < 0 && !usedFancyZones))
                     else if (maximizeOnTop && useSnapAssist && (hookStruct.pt.Y <= 40 | rect.top < 0 && !usedFancyZones))
                     {
                         Debug.WriteLine("set full 2");
