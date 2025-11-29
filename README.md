@@ -17,6 +17,7 @@ It's an application that lets you move windows **without holding down Alt or Con
 <a href="https://github.com/PinchToDebug/DragWin/releases/latest"><img src="https://img.shields.io/github/v/release/PinchToDebug/DragWin" alt="Version"></a>
 <a href="https://github.com/PinchToDebug/DragWin/issues"><img src="https://img.shields.io/github/issues/PinchToDebug/DragWin" alt="Issues"></a>
 
+[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/J3J61PAH6H)
 ## ✨ Features
 
 - Moving windows with right-click
