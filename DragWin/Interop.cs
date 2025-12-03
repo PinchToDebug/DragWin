@@ -11,6 +11,17 @@ using Point = System.Drawing.Point;
 
 public static class Interop
 {
+    [DllImport("kernel32.dll")]
+    public static extern uint GetCurrentThreadId();
+
+    [DllImport("user32.dll")]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    public static extern bool AttachThreadInput(uint idAttach, uint idAttachTo, bool fAttach);
+
+    [DllImport("user32.dll")]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    public static extern bool BringWindowToTop(IntPtr hWnd);
+    
     [DllImport("user32.dll", CharSet = CharSet.Auto)]
     public static extern uint RegisterWindowMessage(string lpString);
     [DllImport("user32.dll", SetLastError = true)]

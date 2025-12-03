@@ -32,6 +32,7 @@ namespace DragWin
         public static extern IntPtr GetWindow(IntPtr hWnd, uint uCmd);
         static SettingsWindow SWindow;
         static bool shiftDown = false;
+        static bool allowedToScroll = false;
 
         // update url
         // -----------------
@@ -709,6 +710,7 @@ namespace DragWin
                 #endregion
 
 
+                allowedToScroll = false;
                 do
                 {
                     if (IsWindowVisible(_hWnd) && !IsIconic(_hWnd))
@@ -753,7 +755,7 @@ namespace DragWin
                 }
                 Debug.WriteLine("\n");
                 //  MessageBox.Show($"md: {middleMouseDown}\n{windowOrder.Count()}");
-
+                allowedToScroll = true;
                 return CallNextHookEx(hookIdMouse, nCode, wParam, lParam);
 
             }
@@ -843,31 +845,36 @@ namespace DragWin
             }
 
 
-            if (wParam == (IntPtr)WM_MOUSEWHEEL && middleMouseDownHasCount && windowOrder.Count > 0 && canScrollWindows)
+            if (wParam == (IntPtr)WM_MOUSEWHEEL && middleMouseDownHasCount && windowOrder.Count > 0 && canScrollWindows && allowedToScroll)
             {
                 didScrollWindows = true;
                 int currentIndex = windowOrder.IndexOf(GetForegroundWindow());
-                // Debug.WriteLine($"index: {currentIndex}");
-                //  Debug.WriteLine(currentIndex);
-                if (currentIndex == -1)
-                {
-                    return -1;
-                }
-                if ((short)((hookStruct.mouseData >> 16) & 0xffff) < 0 && (currentIndex + 1) <= windowOrder.Count() - 1) // Scroll down
-                {
-                    // Debug.WriteLine($"down\t{GetWindowTitle(windowOrder[currentIndex + 1])}");
-                    SetForegroundWindow(windowOrder[currentIndex + 1]);
-                    Debug.WriteLine($"set +1: {windowOrder[currentIndex + 1]}");
+                short delta = (short)((hookStruct.mouseData >> 16) & 0xffff);
 
-                }
-                else if ((short)((hookStruct.mouseData >> 16) & 0xffff) > 0 && currentIndex - 1 != -1) // Scroll up
+                if (delta < 0) // Scroll down
                 {
-
-                    // Debug.WriteLine($"up\t\t{GetWindowTitle(windowOrder[currentIndex - 1])}");
-                    SetForegroundWindow(windowOrder[currentIndex - 1]);
-                    Debug.WriteLine($"set -1: {windowOrder[currentIndex - 1]}");
-
+                    if ((currentIndex + 1) <= windowOrder.Count() - 1)
+                    {
+                        allowedToScroll = false;
+                        ForceForegroundWindow(windowOrder[currentIndex + 1]);
+                        Debug.WriteLine($"set +1: {windowOrder[currentIndex + 1]}");
+                    }
                 }
+                else if (delta > 0) // Scroll up
+                {
+                    if (currentIndex - 1 != -1)
+                    {
+                        allowedToScroll = false;
+
+                        ForceForegroundWindow(windowOrder[currentIndex - 1]);
+                        Debug.WriteLine($"set -1: {windowOrder[currentIndex - 1]}");
+                    }
+                }
+                else
+                {
+                    Debug.WriteLine($"set none: {windowOrder[currentIndex]}");
+                }
+                allowedToScroll = true;
                 return -1;
             }
 
@@ -1626,6 +1633,28 @@ namespace DragWin
                     this.Close();
                 });
             });
+        }
+        private static void ForceForegroundWindow(IntPtr hWnd) // solution: https://shlomio.wordpress.com/2012/09/04/solved-setforegroundwindow-win32-api-not-always-works/
+        {
+            [DllImport("user32.dll", SetLastError = true)]
+            static extern uint GetWindowThreadProcessId(IntPtr hWnd, IntPtr lpdwProcessId);
+           
+            uint foreThread = GetWindowThreadProcessId(GetForegroundWindow(), IntPtr.Zero);
+            uint appThread = GetCurrentThreadId();
+            const uint SW_SHOW = 5;
+
+            if (foreThread != appThread)
+            {
+                AttachThreadInput(foreThread, appThread, true);
+                BringWindowToTop(hWnd);
+                ShowWindow(hWnd, 5);
+                AttachThreadInput(foreThread, appThread, false);
+            }
+            else
+            {
+                BringWindowToTop(hWnd);
+                ShowWindow(hWnd, 5);
+            }
         }
 
         private void Enable_Checked(object sender, RoutedEventArgs e)
