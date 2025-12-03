@@ -21,8 +21,11 @@
     Margin="0,127,0,114" RightClick="TrayIcon_RightClick">
         <ui:NotifyIcon.Menu>
             <ContextMenu MinWidth="65">
-                
-                <MenuItem Name="versionHeader" Header="v" IsEnabled="False" HorizontalAlignment="Center" Background="{x:Null}" FontFamily="Segoe Print" >
+
+                <MenuItem Name="versionHeader" 
+                          Header="v" 
+                          Foreground="LightGray"
+                          IsEnabled="True" HorizontalAlignment="Center" Background="{x:Null}" FontFamily="Segoe Print" Cursor="Hand" Click="versionHeader_Click">
                 </MenuItem>
 
                 <MenuItem x:Name="Update_Button" Header="{x:Static prop:Lang.NotifyIcon_check_update}" Click="Update_Button_Click" Foreground="#FF91EF78" VerticalAlignment="Center" HorizontalAlignment="Center" />

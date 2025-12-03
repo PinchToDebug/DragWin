@@ -1903,6 +1903,18 @@ namespace DragWin
         {
             Exit_Button.Foreground = Brushes.White;
         }
+        private void versionHeader_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                ProcessStartInfo sInfo = new ProcessStartInfo($"https://github.com/PinchToDebug/DragWin") { UseShellExecute = true };
+                _ = Process.Start(sInfo);
+            }
+            catch
+            {
+            }
+        }
+
         private void KofiButtonImage_MouseUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             try
