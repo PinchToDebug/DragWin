@@ -1903,5 +1903,16 @@ namespace DragWin
         {
             Exit_Button.Foreground = Brushes.White;
         }
+        private void KofiButtonImage_MouseUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            try
+            {
+                ProcessStartInfo sInfo = new ProcessStartInfo($"https://ko-fi.com/J3J61PAH6H") { UseShellExecute = true };
+                _ = Process.Start(sInfo);
+            }
+            catch
+            {
+            }
+        }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Microsoft.Win32;
+using System.Diagnostics;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -241,6 +242,17 @@ namespace DragWin
 
             blockedList.Children.Add(panel);
             SaveBlockedListToRegistry();
+        }
+        private void KofiButtonImage_MouseUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            try
+            {
+                ProcessStartInfo sInfo = new ProcessStartInfo($"https://ko-fi.com/J3J61PAH6H") { UseShellExecute = true };
+                _ = Process.Start(sInfo);
+            }
+            catch
+            {
+            }
         }
     }
 }

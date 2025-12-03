@@ -21,10 +21,22 @@
     Margin="0,127,0,114" RightClick="TrayIcon_RightClick">
         <ui:NotifyIcon.Menu>
             <ContextMenu MinWidth="65">
+                
                 <MenuItem Name="versionHeader" Header="v" IsEnabled="False" HorizontalAlignment="Center" Background="{x:Null}" FontFamily="Segoe Print" >
- 
                 </MenuItem>
+
                 <MenuItem x:Name="Update_Button" Header="{x:Static prop:Lang.NotifyIcon_check_update}" Click="Update_Button_Click" Foreground="#FF91EF78" VerticalAlignment="Center" HorizontalAlignment="Center" />
+                <StackPanel Orientation="Horizontal" 
+                            Cursor="Hand" 
+                            VerticalAlignment="Center"
+                            HorizontalAlignment="Center">
+                    <Image x:Name="KofiButtonImage"
+                            Source="/kofi/support_me_on_kofi_dark.png"
+                            Height="30"
+                            Margin="0"
+                            RenderOptions.BitmapScalingMode="Fant"
+                            MouseUp="KofiButtonImage_MouseUp"/>
+                </StackPanel>
                 <MenuItem x:Name="Enable_Button" Header="{x:Static prop:Lang.NotifyIcon_enable}" IsCheckable="True"  Checked="Enable_Checked"  Unchecked="Enable_Checked" IsChecked="True" />
                 <MenuItem x:Name="Autorun_Button" Header="{x:Static prop:Lang.NotifyIcon_autorun}" IsCheckable="True" Checked="StartLogin_Checked"  Unchecked="StartLogin_Checked"  />
 

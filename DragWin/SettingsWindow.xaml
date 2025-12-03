@@ -22,8 +22,16 @@
                  CanMaximize="False" ShowMinimize="False" ApplicationTheme="Dark" ShowMaximize="False"
                  Grid.Row="0">
             <ui:TitleBar.Icon>
-                <ui:ImageIcon Source="/Icon/default.ico" Margin="0,0,6,0" />
+                <ui:ImageIcon Source="/Icon/default.ico" Margin="0,0,6,0"  />
             </ui:TitleBar.Icon>
+            <ui:TitleBar.TrailingContent>
+                <ui:Image x:Name="KofiButtonImage" VerticalAlignment="Bottom"
+             Source="/kofi/support_me_on_kofi_dark.png" 
+             RenderOptions.BitmapScalingMode="Fant" 
+             Margin="0"
+             HorizontalAlignment="Left"
+             Cursor="Hand" MouseUp="KofiButtonImage_MouseUp"/>
+            </ui:TitleBar.TrailingContent>
         </ui:TitleBar>
 
         <Grid Grid.Row="1" Margin="20,5,20,0">
